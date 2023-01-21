@@ -25,3 +25,7 @@
 - To fix this,
   - first select the first column (containing all the data)
   - then use Excel's "Text to Columns" feature, located in the "Data" group of the toolbar 
+
+## Version History
+- V1.1 [2023_01_21]: application now also exports the player ELO ratings
+- v1.0 [2023_01_20]: basic functionality for exporting timestamp, board, player names and scores, as well as the number of generations into a CSV
