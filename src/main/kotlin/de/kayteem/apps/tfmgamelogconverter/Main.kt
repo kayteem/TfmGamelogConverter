@@ -1,9 +1,12 @@
 package de.kayteem.apps.tfmgamelogconverter
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import de.kayteem.apps.tfmgamelogconverter.controller.csvExport.GamesSummariesExporterImpl
 import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogImporter
 import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogImporterImpl
+import de.kayteem.apps.tfmgamelogconverter.model.csvExport.GameSummary
 import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.GameLog
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -17,24 +20,40 @@ fun main() {
     // import all jsons from the execution directory
     val executionPath: Path = Paths.get("").toAbsolutePath()
     val gameLogs: List<GameLog> = importer.importAll(executionPath)
-    println("Imported ${gameLogs.size} json files")
+    println("Import of ${gameLogs.size} json files finished")
 
-    // print results
-    gameLogs.forEach {
-        val timestamp = it.start
-        val board = it.board
+    // convert GameLogs to GameSummaries
+    val gameSummaries = gameLogs.map {
         val player1 = it.players.player1
-        val score1 = it.finalScores()[player1]
         val player2 = it.players.player2
-        val score2 = it.finalScores()[player2]
-        val generations = it.generations()
+        val player3 = it.players.player3
+        val player4 = it.players.player4
+        val player5 = it.players.player5
+        val finalScores = it.finalScores()
 
-        println(
-            timestamp + ": " +
-            board + " - " +
-            player1.name + "[" + score1 + "] vs. " +
-            player2.name + "[" + score2 + "] - " +
-            generations + " generations"
+        GameSummary(
+            timestamp = it.start,
+            board = it.board,
+            player1Name = player1.name,
+            player1Score = finalScores[player1]!!,
+            player2Name = player2.name,
+            player2Score = finalScores[player2]!!,
+            player3Name = player3?.name,
+            player3Score = finalScores[player3],
+            player4Name = player4?.name,
+            player4Score = finalScores[player4],
+            player5Name = player5?.name,
+            player5Score = finalScores[player5],
+            generations = it.generations()
         )
     }
+
+    // build the exporter
+    val csvMapper = CsvMapper()
+    val exporter = GamesSummariesExporterImpl(csvMapper)
+
+    // export all game summaries to CSV
+    val csvPath: Path = executionPath.resolve("TfmGamesOverview.csv")
+    exporter.export(csvPath, gameSummaries)
+    println("Export of ${gameSummaries.size} game summaries finished: $csvPath")
 }
