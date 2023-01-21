@@ -1,5 +1,6 @@
 import de.kayteem.apps.tfmgamelogconverter.model.csvExport.GameSummary
 import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.*
+import kotlin.math.roundToInt
 
 /**
  * Created by Tobias Mielke
@@ -60,12 +61,17 @@ object TestDataFactory {
     }
 
     fun buildSummaryGame1(): GameSummary {
+        val player1 = buildPlayer1Game1()
+        val player2 = buildPlayer2Game1()
+
         return GameSummary(
             timestamp = "2023-01-10T18:03:55.4Z",
             board = "Tharsis",
-            player1Name = "KayTeEm",
+            player1Name = player1.name,
+            player1Elo = player1.elo.roundToInt(),
             player1Score = 102,
             player2Name = "Player2",
+            player2Elo = player2.elo.roundToInt(),
             player2Score = 98,
             generations = 11
         )

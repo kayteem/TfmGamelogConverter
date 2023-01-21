@@ -10,7 +10,13 @@ import de.kayteem.apps.tfmgamelogconverter.model.csvExport.GameSummary
 import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.GameLog
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.math.roundToInt
 
+/**
+ * Created by Tobias Mielke
+ * Created on 21.01.2023
+ * Changed on 21.01.2023
+ */
 fun main() {
 
     // build the importer
@@ -35,14 +41,19 @@ fun main() {
             timestamp = it.start,
             board = it.board,
             player1Name = player1.name,
+            player1Elo = player1.elo.roundToInt(),
             player1Score = finalScores[player1]!!,
             player2Name = player2.name,
+            player2Elo = player2.elo.roundToInt(),
             player2Score = finalScores[player2]!!,
             player3Name = player3?.name,
+            player3Elo = player3?.elo?.roundToInt(),
             player3Score = finalScores[player3],
             player4Name = player4?.name,
+            player4Elo = player4?.elo?.roundToInt(),
             player4Score = finalScores[player4],
             player5Name = player5?.name,
+            player5Elo = player5?.elo?.roundToInt(),
             player5Score = finalScores[player5],
             generations = it.generations()
         )
