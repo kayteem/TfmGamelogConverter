@@ -2,9 +2,9 @@ package de.kayteem.apps.tfmgamelogconverter
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import de.kayteem.apps.tfmgamelogconverter.controller.GameLogImporter
-import de.kayteem.apps.tfmgamelogconverter.controller.GameLogImporterImpl
-import de.kayteem.apps.tfmgamelogconverter.model.GameLog
+import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogImporter
+import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogImporterImpl
+import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.GameLog
 import java.nio.file.Path
 import java.nio.file.Paths
 

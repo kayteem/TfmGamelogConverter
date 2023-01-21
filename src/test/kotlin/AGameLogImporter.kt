@@ -1,9 +1,10 @@
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import de.kayteem.apps.tfmgamelogconverter.controller.GameLogImporter
-import de.kayteem.apps.tfmgamelogconverter.controller.GameLogImporterImpl
-import de.kayteem.apps.tfmgamelogconverter.model.*
+import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogImporter
+import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogImporterImpl
+import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.GameLog
 import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import java.nio.file.Path
@@ -26,13 +27,19 @@ class AGameLogImporter {
 
         // setup
         val jsonPath = loadJsonResource(RES_LOG_GAME_1)
+        if (jsonPath == null) {
+            fail("JSON resource not found!")
+        }
 
         // execution
-        val gameLog = importer.import(jsonPath) !!
+        val gameLog = importer.import(jsonPath!!)
+        if (gameLog == null) {
+            fail("JSON import failed!")
+        }
 
         // post-condition
-        assertEquals(EXPECTED_LOG_GAME_1, keepOnlyLastTurn(gameLog))
-
+        assertEquals(EXPECTED_LOG_GAME_1, keepOnlyLastTurn(gameLog!!))
+        
         assertEquals(EXPECTED_GENERATIONS_GAME_1, gameLog.generations())
         
         assertEquals(
@@ -48,10 +55,13 @@ class AGameLogImporter {
     fun canImportMultipleJsonsFromDirectory() {
 
         // setup
-        val path = loadResourceDirectory()
+        val dirPath = loadResourceDirectory()
+        if (dirPath == null) {
+            fail("path to JSON resources not found!")
+        }
 
         // execution
-        val gameLogs = importer.importAll(path)
+        val gameLogs = importer.importAll(dirPath!!)
 
         // post-condition
         assertEquals(2, gameLogs.size)
@@ -99,103 +109,31 @@ class AGameLogImporter {
         // constants - common
         private const val RES_DIRECTORY = "exampleJson/"
 
-
         // constants - game 1
         const val RES_LOG_GAME_1: String = "gamelog_2023-01-10"
 
-        private val EXPECTED_PLAYER_1_GAME_1 = Player(
-            name = "KayTeEm",
-            color = "Green",
-            corporation = "Thorgate",
-            elo = 1601.0216806701019
-        )
-
-        private val EXPECTED_PLAYER_2_GAME_1 = Player(
-            name = "Player2",
-            color = "Blue",
-            corporation = "UNMI",
-            elo = 1617.7076549970068
-        )
-
+        private val EXPECTED_PLAYER_1_GAME_1 = TestDataFactory.buildPlayer1Game1()
+        private val EXPECTED_PLAYER_2_GAME_1 = TestDataFactory.buildPlayer2Game1()
         private const val EXPECTED_GENERATIONS_GAME_1 = 11
         private const val EXPECTED_SCORE_1_GAME_1 = 102
         private const val EXPECTED_SCORE_2_GAME_1 = 98
+        val EXPECTED_LOG_GAME_1 = TestDataFactory.buildLogGame1()
 
-        val EXPECTED_LOG_GAME_1 = GameLog(
-            board = "Tharsis",
-            isRanked = false,
-            isOnline = true,
-            start = "2023-01-10T18:03:55.4Z",
-            players = Players(
-                player1 = EXPECTED_PLAYER_1_GAME_1,
-                player2 = EXPECTED_PLAYER_2_GAME_1
-            ),
-            turns = listOf(
-                Turn(
-                    generation = EXPECTED_GENERATIONS_GAME_1,
-                    playerInfos = PlayerInfos(
-                        playerInfo1 = PlayerInfo(
-                            score = Score(EXPECTED_SCORE_1_GAME_1)
-                        ),
-                        playerInfo2 = PlayerInfo(
-                            score = Score(EXPECTED_SCORE_2_GAME_1)
-                        )
-                    )
-                )
-            )
-        )
-
-        // constants - game 1
-        private val EXPECTED_PLAYER_1_GAME_2 = Player(
-            name = "KayTeEm",
-            color = "Green",
-            corporation = "InterplanetaryCinematics",
-            elo = 1629.384708225632
-        )
-
-        private val EXPECTED_PLAYER_2_GAME_2 = Player(
-            name = "Player 2",
-            color = "Blue",
-            corporation = "Inventrix",
-            elo = 1696.4541812619316
-        )
-
+        // constants - game 2
+        private val EXPECTED_PLAYER_1_GAME_2 = TestDataFactory.buildPlayer1Game2()
+        private val EXPECTED_PLAYER_2_GAME_2 = TestDataFactory.buildPlayer2Game2()
         private const val EXPECTED_GENERATIONS_GAME_2 = 12
         private const val EXPECTED_SCORE_1_GAME_2 = 130
         private const val EXPECTED_SCORE_2_GAME_2 = 69
-
-        val EXPECTED_LOG_GAME_2 = GameLog(
-            board = "Tharsis",
-            isRanked = false,
-            isOnline = true,
-            start = "2023-01-15T10:28:43.683Z",
-            players = Players(
-                player1 = EXPECTED_PLAYER_1_GAME_2,
-                player2 = EXPECTED_PLAYER_2_GAME_2
-            ),
-            turns = listOf(
-                Turn(
-                    generation = EXPECTED_GENERATIONS_GAME_2,
-                    playerInfos = PlayerInfos(
-                        playerInfo1 = PlayerInfo(
-                            score = Score(EXPECTED_SCORE_1_GAME_2)
-                        ),
-                        playerInfo2 = PlayerInfo(
-                            score = Score(EXPECTED_SCORE_2_GAME_2)
-                        )
-                    )
-                )
-            )
-        )
-
+        val EXPECTED_LOG_GAME_2 = TestDataFactory.buildLogGame2()
 
         // utils
-        fun loadJsonResource(resourceFilename: String): Path {
-            return Companion::class.java.getResource("$RES_DIRECTORY$resourceFilename.json").toURI().toPath()
+        fun loadJsonResource(resourceFilename: String): Path? {
+            return Companion::class.java.getResource("$RES_DIRECTORY$resourceFilename.json")?.toURI()?.toPath()
         }
 
-        fun loadResourceDirectory(): Path {
-            return Companion::class.java.getResource(RES_DIRECTORY).toURI().toPath()
+        fun loadResourceDirectory(): Path? {
+            return Companion::class.java.getResource(RES_DIRECTORY)?.toURI()?.toPath()
         }
 
         fun keepOnlyLastTurn(gameLog: GameLog): GameLog {

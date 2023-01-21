@@ -1,4 +1,4 @@
-package de.kayteem.apps.tfmgamelogconverter.model
+package de.kayteem.apps.tfmgamelogconverter.model.jsonImport
 
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties

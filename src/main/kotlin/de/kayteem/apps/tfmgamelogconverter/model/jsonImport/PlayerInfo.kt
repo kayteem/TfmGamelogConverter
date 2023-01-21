@@ -1,4 +1,4 @@
-package de.kayteem.apps.tfmgamelogconverter.model
+package de.kayteem.apps.tfmgamelogconverter.model.jsonImport
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
@@ -8,9 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
  * Changed on 20.01.2023
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Player(
-    val name: String,
-    val color: String,
-    val corporation: String,
-    val elo: Double
+data class PlayerInfo(
+    val score: Score
 )

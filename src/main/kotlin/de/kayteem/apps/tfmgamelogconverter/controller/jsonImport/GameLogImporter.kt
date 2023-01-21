@@ -1,6 +1,6 @@
-package de.kayteem.apps.tfmgamelogconverter.controller
+package de.kayteem.apps.tfmgamelogconverter.controller.jsonImport
 
-import de.kayteem.apps.tfmgamelogconverter.model.GameLog
+import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.GameLog
 import java.nio.file.Path
 
 /**
