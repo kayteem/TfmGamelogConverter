@@ -10,10 +10,11 @@
 
 ## QuickStart Guide
 - This application requires no installation.
-- Simply download the .jar file and the .bat file from the "executable" directory  
-and copy them to whereever your GameLog JSON files are located.
-- In order to run the application, simply double-click the .bat file
-- As a result,
+- Simply download the [.zip archive](https://github.com/kayteem/TfmGamelogConverter/blob/main/executable/TfmGamelogConverter%20v1.0.zip) and extract the contents (.jar file and .bat file)  
+  to whereever your GameLog JSON files are located at, which usually should be at  
+  Steam\SteamApps\common\Terraforming Mars\Logs\GameLogs.
+- In order to run the application, simply double-click the extracted batch file (.bat)
+- As a result:
   - the application (.jar) will be started
   - all JSON files in this directory (and all its sub-directories) will be imported
   - the application creates a summary CSV file, containing the data of all imported JSON files
