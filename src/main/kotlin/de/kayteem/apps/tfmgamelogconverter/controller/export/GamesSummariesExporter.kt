@@ -1,4 +1,4 @@
-package de.kayteem.apps.tfmgamelogconverter.controller.csvExport
+package de.kayteem.apps.tfmgamelogconverter.controller.export
 
 import de.kayteem.apps.tfmgamelogconverter.model.csvExport.GameSummary
 import java.nio.file.Path

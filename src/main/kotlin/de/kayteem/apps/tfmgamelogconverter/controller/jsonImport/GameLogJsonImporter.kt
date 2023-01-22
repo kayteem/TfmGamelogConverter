@@ -10,7 +10,7 @@ import kotlin.io.path.absolutePathString
  * Created on 20.01.2023
  * Changed on 20.01.2023
  */
-class GameLogImporterImpl(private val mapper: ObjectMapper) : GameLogImporter {
+class GameLogJsonImporter(private val mapper: ObjectMapper) : GameLogImporter {
 
     override fun import(path: Path): GameLog? {
         val absolutePathStr = path.absolutePathString()

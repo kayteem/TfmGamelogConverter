@@ -1,4 +1,4 @@
-package de.kayteem.apps.tfmgamelogconverter.controller.csvExport
+package de.kayteem.apps.tfmgamelogconverter.controller.export
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
@@ -11,7 +11,7 @@ import java.nio.file.Path
  * Created on 21.01.2023
  * Changed on 21.01.2023
  */
-class GamesSummariesExporterImpl(private val mapper: CsvMapper) : GamesSummariesExporter {
+class GameSummariesCsvExporter(private val mapper: CsvMapper) : GamesSummariesExporter {
 
     override fun export(path: Path, gameSummaries: List<GameSummary>) {
         val schema = CsvSchema.builder()

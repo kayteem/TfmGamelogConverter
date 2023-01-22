@@ -1,7 +1,7 @@
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogImporter
-import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogImporterImpl
+import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogJsonImporter
 import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.GameLog
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
@@ -99,7 +99,7 @@ class AGameLogImporter {
     fun setUp() {
         val objectMapper: ObjectMapper = jacksonObjectMapper()
 
-        importer = GameLogImporterImpl(objectMapper)
+        importer = GameLogJsonImporter(objectMapper)
     }
 
 

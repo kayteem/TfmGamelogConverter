@@ -3,9 +3,9 @@ package de.kayteem.apps.tfmgamelogconverter
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import de.kayteem.apps.tfmgamelogconverter.controller.csvExport.GamesSummariesExporterImpl
+import de.kayteem.apps.tfmgamelogconverter.controller.export.GameSummariesCsvExporter
 import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogImporter
-import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogImporterImpl
+import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogJsonImporter
 import de.kayteem.apps.tfmgamelogconverter.model.csvExport.GameSummary
 import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.GameLog
 import java.nio.file.Path
@@ -21,7 +21,7 @@ fun main() {
 
     // build the importer
     val objectMapper: ObjectMapper = jacksonObjectMapper()
-    val importer: GameLogImporter = GameLogImporterImpl(objectMapper)
+    val importer: GameLogImporter = GameLogJsonImporter(objectMapper)
 
     // import all jsons from the execution directory
     val executionPath: Path = Paths.get("").toAbsolutePath()
@@ -61,7 +61,7 @@ fun main() {
 
     // build the exporter
     val csvMapper = CsvMapper()
-    val exporter = GamesSummariesExporterImpl(csvMapper)
+    val exporter = GameSummariesCsvExporter(csvMapper)
 
     // export all game summaries to CSV
     val csvPath: Path = executionPath.resolve("TfmGamesOverview.csv")

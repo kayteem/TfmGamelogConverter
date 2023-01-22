@@ -1,8 +1,7 @@
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
-import de.kayteem.apps.tfmgamelogconverter.controller.csvExport.GamesSummariesExporter
-import de.kayteem.apps.tfmgamelogconverter.controller.csvExport.GamesSummariesExporterImpl
+import de.kayteem.apps.tfmgamelogconverter.controller.export.GamesSummariesExporter
+import de.kayteem.apps.tfmgamelogconverter.controller.export.GameSummariesCsvExporter
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -24,6 +23,7 @@ class AGamesSummariesExporter {
 
         // setup
         val gameSummaries = listOf(LOG_GAME_1, LOG_GAME_2)
+        exporter = GameSummariesCsvExporter(CsvMapper())
 
         // execution
         exporter.export(PATH_CSV, gameSummaries)
@@ -34,21 +34,13 @@ class AGamesSummariesExporter {
     }
 
 
-    // helpers
-    @Before
-    fun setUp() {
-        val csvMapper = CsvMapper()
-
-        exporter = GamesSummariesExporterImpl(csvMapper)
-    }
-
-
+    // companion
     companion object {
 
-        val PATH_CSV: Path = Paths.get("out/artifacts/TfmGamelogConverter_jar/TfmGamesOverview.csv").toAbsolutePath()
+        private val PATH_ARTIFACT: Path = Paths.get("out/artifacts/TfmGamelogConverter_jar/")
+        val PATH_CSV: Path = PATH_ARTIFACT.resolve("TfmGamesOverview.csv")
 
         val LOG_GAME_1 = TestDataFactory.buildSummaryGame1()
-        
         val LOG_GAME_2 = TestDataFactory.buildSummaryGame2()
     }
 
