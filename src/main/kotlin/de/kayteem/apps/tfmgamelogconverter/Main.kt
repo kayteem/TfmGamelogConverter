@@ -1,9 +1,8 @@
 package de.kayteem.apps.tfmgamelogconverter
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import de.kayteem.apps.tfmgamelogconverter.controller.export.GameSummariesCsvExporter
+import de.kayteem.apps.tfmgamelogconverter.controller.export.GamesSummariesExcelExporter
 import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogImporter
 import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogJsonImporter
 import de.kayteem.apps.tfmgamelogconverter.model.csvExport.GameSummary
@@ -15,7 +14,7 @@ import kotlin.math.roundToInt
 /**
  * Created by Tobias Mielke
  * Created on 21.01.2023
- * Changed on 21.01.2023
+ * Changed on 22.01.2023
  */
 fun main() {
 
@@ -41,18 +40,23 @@ fun main() {
             timestamp = it.start,
             board = it.board,
             player1Name = player1.name,
+            player1Corp = player1.corporation,
             player1Elo = player1.elo.roundToInt(),
             player1Score = finalScores[player1]!!,
             player2Name = player2.name,
+            player2Corp = player2.corporation,
             player2Elo = player2.elo.roundToInt(),
             player2Score = finalScores[player2]!!,
             player3Name = player3?.name,
+            player3Corp = player3?.corporation,
             player3Elo = player3?.elo?.roundToInt(),
             player3Score = finalScores[player3],
             player4Name = player4?.name,
+            player4Corp = player4?.corporation,
             player4Elo = player4?.elo?.roundToInt(),
             player4Score = finalScores[player4],
             player5Name = player5?.name,
+            player5Corp = player5?.corporation,
             player5Elo = player5?.elo?.roundToInt(),
             player5Score = finalScores[player5],
             generations = it.generations()
@@ -60,11 +64,10 @@ fun main() {
     }
 
     // build the exporter
-    val csvMapper = CsvMapper()
-    val exporter = GameSummariesCsvExporter(csvMapper)
+    val exporter = GamesSummariesExcelExporter()
 
     // export all game summaries to CSV
-    val csvPath: Path = executionPath.resolve("TfmGamesOverview.csv")
-    exporter.export(csvPath, gameSummaries)
-    println("Export of ${gameSummaries.size} game summaries finished: $csvPath")
+    val excelPath: Path = executionPath.resolve("TfmGamesOverview.xlsx")
+    exporter.export(excelPath, gameSummaries)
+    println("Export of ${gameSummaries.size} game summaries finished: $excelPath")
 }

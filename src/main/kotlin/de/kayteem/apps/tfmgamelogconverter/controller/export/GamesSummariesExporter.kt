@@ -10,6 +10,6 @@ import java.nio.file.Path
  */
 interface GamesSummariesExporter {
 
-    fun export(path: Path, gameSummaries: List<GameSummary>)
+    fun export(path: Path, gamesSummaries: List<GameSummary>)
 
 }

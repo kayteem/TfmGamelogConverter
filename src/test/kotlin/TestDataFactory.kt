@@ -5,7 +5,7 @@ import kotlin.math.roundToInt
 /**
  * Created by Tobias Mielke
  * Created on 21.01.2023
- * Changed on 21.01.2023
+ * Changed on 22.01.2023
  */
 object TestDataFactory {
 
@@ -61,19 +61,22 @@ object TestDataFactory {
     }
 
     fun buildSummaryGame1(): GameSummary {
-        val player1 = buildPlayer1Game1()
-        val player2 = buildPlayer2Game1()
+        val logGame1 = buildLogGame1()
+        val player1 = logGame1.players.player1
+        val player2 = logGame1.players.player2
 
         return GameSummary(
-            timestamp = "2023-01-10T18:03:55.4Z",
-            board = "Tharsis",
+            timestamp = logGame1.start,
+            board = logGame1.board,
             player1Name = player1.name,
+            player1Corp = player1.corporation,
             player1Elo = player1.elo.roundToInt(),
-            player1Score = 102,
-            player2Name = "Player2",
+            player1Score = logGame1.finalScores()[player1] ?: 0,
+            player2Name = player2.name,
+            player2Corp = player2.corporation,
             player2Elo = player2.elo.roundToInt(),
-            player2Score = 98,
-            generations = 11
+            player2Score = logGame1.finalScores()[player2] ?: 0,
+            generations = logGame1.generations()
         )
     }
 
@@ -130,14 +133,22 @@ object TestDataFactory {
     }
 
     fun buildSummaryGame2(): GameSummary {
+        val logGame2 = buildLogGame2()
+        val player1 = logGame2.players.player1
+        val player2 = logGame2.players.player2
+
         return GameSummary(
-            timestamp = "2023-01-15T10:28:43.683Z",
-            board = "Tharsis",
-            player1Name = "KayTeEm",
-            player1Score = 130,
-            player2Name = "Player2",
-            player2Score = 69,
-            generations = 12
+            timestamp = logGame2.start,
+            board = logGame2.board,
+            player1Name = player1.name,
+            player1Corp = player1.corporation,
+            player1Elo = player1.elo.roundToInt(),
+            player1Score = logGame2.finalScores()[player1] ?: 0,
+            player2Name = player2.name,
+            player2Corp = player2.corporation,
+            player2Elo = player2.elo.roundToInt(),
+            player2Score = logGame2.finalScores()[player2] ?: 0,
+            generations = logGame2.generations()
         )
     }
 

@@ -9,6 +9,9 @@ import kotlin.io.path.absolutePathString
  * Created by Tobias Mielke
  * Created on 20.01.2023
  * Changed on 20.01.2023
+ *
+ * JSON import tutorial:
+ * https://stackabuse.com/reading-and-writing-json-in-kotlin-with-jackson/
  */
 class GameLogJsonImporter(private val mapper: ObjectMapper) : GameLogImporter {
 
