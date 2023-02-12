@@ -13,9 +13,15 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
  */
 class CellStyleBuilder(private val workbook: XSSFWorkbook) {
 
+    // members
+    private var stringFormat = BuiltinFormats.getBuiltinFormat("text").toShort()
+    private var intFormat = workbook.createDataFormat().getFormat("0")
+
+
     // dependencies
     private var fontSize: Int = 12
     private var bold: Boolean = false
+    private var format: Short = stringFormat
     private var horAlignment: HorizontalAlignment = HorizontalAlignment.CENTER
     private var vertAlignment: VerticalAlignment = VerticalAlignment.CENTER
     private var backgroundColor: IndexedColors = IndexedColors.WHITE
@@ -31,6 +37,18 @@ class CellStyleBuilder(private val workbook: XSSFWorkbook) {
 
     fun bold(bold: Boolean): CellStyleBuilder {
         this.bold = bold
+
+        return this
+    }
+
+    fun stringFormat(): CellStyleBuilder {
+        this.format = stringFormat
+
+        return this
+    }
+
+    fun intFormat(): CellStyleBuilder {
+        this.format = intFormat
 
         return this
     }
@@ -64,6 +82,7 @@ class CellStyleBuilder(private val workbook: XSSFWorkbook) {
         val cellStyle = workbook.createCellStyle()
         with(cellStyle) {
             setFont(font)
+            dataFormat = format
             alignment = horAlignment
             verticalAlignment = vertAlignment
             fillForegroundColor = backgroundColor.index     // called fillForegroundColor, but sets cell background color
