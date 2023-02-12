@@ -3,6 +3,7 @@ package de.kayteem.apps.tfmgamelogconverter.controller.export
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
+import java.time.LocalDateTime
 
 /**
  * Created by Tobias Mielke
@@ -43,6 +44,14 @@ class CellBuilder(private val row: Row, defaultCellStyle: XSSFCellStyle) {
         val cell = row.createCell(columnIdx)
         cell.cellStyle = cellStyle
         cell.setCellValue(value?.toDouble() ?: 0.0)
+
+        return cell
+    }
+
+    fun build(value: LocalDateTime): Cell {
+        val cell = row.createCell(columnIdx)
+        cell.cellStyle = cellStyle
+        cell.setCellValue(value)
 
         return cell
     }

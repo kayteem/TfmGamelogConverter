@@ -1,7 +1,8 @@
 package de.kayteem.apps.tfmgamelogconverter.controller.export
 
 import de.kayteem.apps.tfmgamelogconverter.model.csvExport.GameSummary
-import org.apache.poi.ss.usermodel.*
+import org.apache.poi.ss.usermodel.BorderStyle
+import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.ss.util.RegionUtil
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
@@ -9,6 +10,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.FileOutputStream
 import java.nio.file.Path
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 /**
@@ -29,9 +32,9 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
 
     private lateinit var _topHeaderCellStyle: XSSFCellStyle
     private lateinit var _bottomHeaderCellStyle: XSSFCellStyle
-    private lateinit var _stringDataLeftCellStyle: XSSFCellStyle
     private lateinit var _stringDataCenterCellStyle: XSSFCellStyle
     private lateinit var _intDataCellStyle: XSSFCellStyle
+    private lateinit var _timestampCellStyle: XSSFCellStyle
 
 
     // interface
@@ -44,7 +47,6 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
             .fontSize(12)
             .bold(true)
             .stringFormat()
-            .horAlignment(HorizontalAlignment.CENTER)
             .backgroundColor(IndexedColors.LIGHT_GREEN)
             .build()
 
@@ -52,23 +54,20 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
             .fontSize(10)
             .bold(false)
             .stringFormat()
-            .horAlignment(HorizontalAlignment.CENTER)
             .backgroundColor(IndexedColors.LIGHT_GREEN)
             .build()
 
-        _stringDataLeftCellStyle = _cellStyleBuilder
+        _timestampCellStyle = _cellStyleBuilder
             .fontSize(10)
             .bold(false)
-            .stringFormat()
-            .horAlignment(HorizontalAlignment.LEFT)
-            .backgroundColor(IndexedColors.WHITE)
+            .dateFormat()
+            .backgroundColor(IndexedColors.LIGHT_GREEN)
             .build()
 
         _stringDataCenterCellStyle = _cellStyleBuilder
             .fontSize(10)
             .bold(false)
             .stringFormat()
-            .horAlignment(HorizontalAlignment.CENTER)
             .backgroundColor(IndexedColors.WHITE)
             .build()
 
@@ -76,7 +75,6 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
             .fontSize(10)
             .bold(false)
             .intFormat()
-            .horAlignment(HorizontalAlignment.CENTER)
             .backgroundColor(IndexedColors.WHITE)
             .build()
 
@@ -212,9 +210,11 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
         val cellBuilder = CellBuilder(row, _stringDataCenterCellStyle)
 
         with(cellBuilder) {
-            columnIdx(COL_IDX_TIMESTAMP).cellStyle(_stringDataLeftCellStyle).build(gameSummary.timestamp)
-            columnIdx(COL_IDX_BOARD).cellStyle(_stringDataCenterCellStyle).build(gameSummary.board)
-            columnIdx(COL_IDX_GENERATIONS).cellStyle(_intDataCellStyle).build(gameSummary.generations)
+            val date = LocalDateTime.parse(gameSummary.timestamp, DateTimeFormatter.ISO_DATE_TIME)
+
+            columnIdx(COL_IDX_TIMESTAMP).cellStyle(_timestampCellStyle).build(date)
+            columnIdx(COL_IDX_BOARD).cellStyle(_bottomHeaderCellStyle).build(gameSummary.board)
+            columnIdx(COL_IDX_GENERATIONS).cellStyle(_bottomHeaderCellStyle).build(gameSummary.generations)
             
             columnIdx(COL_IDX_PLAYER_1_NAME).cellStyle(_stringDataCenterCellStyle).build(gameSummary.player1Name)
             columnIdx(COL_IDX_PLAYER_1_CORP).cellStyle(_stringDataCenterCellStyle).build(gameSummary.player1Corp)
@@ -292,7 +292,7 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
         const val COL_IDX_PLAYER_5_ELO = 22
 
         // column widths
-        const val COL_WIDTH_TIMESTAMP = 6000
+        const val COL_WIDTH_TIMESTAMP = 5000
         const val COL_WIDTH_BOARD = 2500
         const val COL_WIDTH_GENERATIONS = 2500
         const val COL_WIDTH_PLAYER_NAME = 4000
