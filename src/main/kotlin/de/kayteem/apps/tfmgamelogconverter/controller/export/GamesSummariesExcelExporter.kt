@@ -25,17 +25,33 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
     // members
     private lateinit var _workbook: XSSFWorkbook
     private lateinit var _sheet: XSSFSheet
+    private lateinit var _cellStyleBuilder: CellStyleBuilder
+
     private lateinit var _topHeaderCellStyle: XSSFCellStyle
     private lateinit var _bottomHeaderCellStyle: XSSFCellStyle
+    private lateinit var _dataCellStyle: XSSFCellStyle
 
 
     // interface
     override fun export(path: Path, gamesSummaries: List<GameSummary>) {
         _workbook = XSSFWorkbook()
         _sheet = _workbook.createSheet()
+        _cellStyleBuilder = CellStyleBuilder(_workbook)
 
-        _topHeaderCellStyle = buildCellStyle(12, true, IndexedColors.LIGHT_GREEN)
-        _bottomHeaderCellStyle = buildCellStyle(10, false, IndexedColors.LIGHT_GREEN)
+        _topHeaderCellStyle = _cellStyleBuilder
+            .fontSize(12)
+            .bold(true)
+            .backgroundColor(IndexedColors.LIGHT_GREEN)
+            .build()
+
+        _bottomHeaderCellStyle = _cellStyleBuilder
+            .fontSize(10)
+            .bold(false)
+            .build()
+
+        _dataCellStyle = _cellStyleBuilder
+            .backgroundColor(IndexedColors.WHITE)
+            .build()
 
         setColumnsWidths()
         populateSheet(gamesSummaries)
@@ -48,30 +64,6 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
 
 
     // helpers
-    private fun buildCellStyle(fontSize: Int, bold: Boolean, backgroundColor: IndexedColors): XSSFCellStyle {
-
-        // font
-        val font = _workbook.createFont()
-        font.fontHeightInPoints = fontSize.toShort()
-        font.bold = bold
-
-        // cell style
-        val cellStyle = _workbook.createCellStyle()
-        with(cellStyle) {
-            setFont(font)
-            alignment = HorizontalAlignment.CENTER
-            verticalAlignment = VerticalAlignment.CENTER
-            fillForegroundColor = backgroundColor.index     // field is called foregroundColor, but sets background color
-            fillPattern = FillPatternType.SOLID_FOREGROUND
-            borderTop = BORDER_STYLE
-            borderLeft = BORDER_STYLE
-            borderRight = BORDER_STYLE
-            borderBottom = BORDER_STYLE
-        }
-
-        return cellStyle
-    }
-
     private fun setColumnsWidths() {
         with(_sheet) {
             setColumnWidth(COL_IDX_TIMESTAMP, COL_WIDTH_TIMESTAMP)
@@ -140,94 +132,82 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
     private fun populateTopHeaderRow() {
         val headerRow = _sheet.createRow(ROW_IDX_TOP_HEADER)
         
-        populateCell(headerRow, COL_IDX_TIMESTAMP, HEADER_STR_TIMESTAMP, CellType.STRING)
-        populateCell(headerRow, COL_IDX_BOARD, HEADER_STR_BOARD, CellType.STRING)
-        populateCell(headerRow, COL_IDX_GENERATIONS, HEADER_STR_GENERATIONS, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_1_NAME, HEADER_STR_PLAYER_1_NAME, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_2_NAME, HEADER_STR_PLAYER_2_NAME, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_3_NAME, HEADER_STR_PLAYER_3_NAME, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_4_NAME, HEADER_STR_PLAYER_4_NAME, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_5_NAME, HEADER_STR_PLAYER_5_NAME, CellType.STRING)
-
-        applyHeaderCellStyle(headerRow, _topHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_TIMESTAMP, HEADER_STR_TIMESTAMP, CellType.STRING, _topHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_BOARD, HEADER_STR_BOARD, CellType.STRING, _topHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_GENERATIONS, HEADER_STR_GENERATIONS, CellType.STRING, _topHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_1_NAME, HEADER_STR_PLAYER_1_NAME, CellType.STRING, _topHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_2_NAME, HEADER_STR_PLAYER_2_NAME, CellType.STRING, _topHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_3_NAME, HEADER_STR_PLAYER_3_NAME, CellType.STRING, _topHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_4_NAME, HEADER_STR_PLAYER_4_NAME, CellType.STRING, _topHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_5_NAME, HEADER_STR_PLAYER_5_NAME, CellType.STRING,_topHeaderCellStyle)
     }
 
     private fun populateBottomHeaderRow() {
         val headerRow = _sheet.createRow(ROW_IDX_BOTTOM_HEADER)
 
-        populateCell(headerRow, COL_IDX_PLAYER_1_NAME, HEADER_STR_NAME, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_1_CORP, HEADER_STR_CORP, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_1_SCORE, HEADER_STR_SCORE, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_1_ELO, HEADER_STR_ELO, CellType.STRING)
+        populateCell(headerRow, COL_IDX_PLAYER_1_NAME, HEADER_STR_NAME, CellType.STRING, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_1_CORP, HEADER_STR_CORP, CellType.STRING, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_1_SCORE, HEADER_STR_SCORE, CellType.STRING, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_1_ELO, HEADER_STR_ELO, CellType.STRING, _bottomHeaderCellStyle)
         
-        populateCell(headerRow, COL_IDX_PLAYER_2_NAME, HEADER_STR_NAME, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_2_CORP, HEADER_STR_CORP, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_2_SCORE, HEADER_STR_SCORE, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_2_ELO, HEADER_STR_ELO, CellType.STRING)
+        populateCell(headerRow, COL_IDX_PLAYER_2_NAME, HEADER_STR_NAME, CellType.STRING, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_2_CORP, HEADER_STR_CORP, CellType.STRING, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_2_SCORE, HEADER_STR_SCORE, CellType.STRING, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_2_ELO, HEADER_STR_ELO, CellType.STRING, _bottomHeaderCellStyle)
         
-        populateCell(headerRow, COL_IDX_PLAYER_3_NAME, HEADER_STR_NAME, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_3_CORP, HEADER_STR_CORP, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_3_SCORE, HEADER_STR_SCORE, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_3_ELO, HEADER_STR_ELO, CellType.STRING)
+        populateCell(headerRow, COL_IDX_PLAYER_3_NAME, HEADER_STR_NAME, CellType.STRING, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_3_CORP, HEADER_STR_CORP, CellType.STRING, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_3_SCORE, HEADER_STR_SCORE, CellType.STRING, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_3_ELO, HEADER_STR_ELO, CellType.STRING, _bottomHeaderCellStyle)
         
-        populateCell(headerRow, COL_IDX_PLAYER_4_NAME, HEADER_STR_NAME, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_4_CORP, HEADER_STR_CORP, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_4_SCORE, HEADER_STR_SCORE, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_4_ELO, HEADER_STR_ELO, CellType.STRING)
+        populateCell(headerRow, COL_IDX_PLAYER_4_NAME, HEADER_STR_NAME, CellType.STRING, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_4_CORP, HEADER_STR_CORP, CellType.STRING, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_4_SCORE, HEADER_STR_SCORE, CellType.STRING, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_4_ELO, HEADER_STR_ELO, CellType.STRING, _bottomHeaderCellStyle)
         
-        populateCell(headerRow, COL_IDX_PLAYER_5_NAME, HEADER_STR_NAME, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_5_CORP, HEADER_STR_CORP, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_5_SCORE, HEADER_STR_SCORE, CellType.STRING)
-        populateCell(headerRow, COL_IDX_PLAYER_5_ELO, HEADER_STR_ELO, CellType.STRING)
-
-        applyHeaderCellStyle(headerRow, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_5_NAME, HEADER_STR_NAME, CellType.STRING, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_5_CORP, HEADER_STR_CORP, CellType.STRING, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_5_SCORE, HEADER_STR_SCORE, CellType.STRING, _bottomHeaderCellStyle)
+        populateCell(headerRow, COL_IDX_PLAYER_5_ELO, HEADER_STR_ELO, CellType.STRING, _bottomHeaderCellStyle)
     }
 
     private fun populateDataRow(rowIdx: Int, gameSummary: GameSummary) {
         val row = _sheet.createRow(rowIdx)
 
-        populateCell(row, COL_IDX_TIMESTAMP, gameSummary.timestamp, CellType.STRING)
-        populateCell(row, COL_IDX_BOARD, gameSummary.board, CellType.STRING)
-        populateCell(row, COL_IDX_GENERATIONS, gameSummary.generations, CellType.NUMERIC)
+        populateCell(row, COL_IDX_TIMESTAMP, gameSummary.timestamp, CellType.STRING, _dataCellStyle)
+        populateCell(row, COL_IDX_BOARD, gameSummary.board, CellType.STRING, _dataCellStyle)
+        populateCell(row, COL_IDX_GENERATIONS, gameSummary.generations, CellType.NUMERIC, _dataCellStyle)
 
-        populateCell(row, COL_IDX_PLAYER_1_NAME, gameSummary.player1Name, CellType.STRING)
-        populateCell(row, COL_IDX_PLAYER_1_CORP, gameSummary.player1Corp, CellType.STRING)
-        populateCell(row, COL_IDX_PLAYER_1_SCORE, gameSummary.player1Score, CellType.NUMERIC)
-        populateCell(row, COL_IDX_PLAYER_1_ELO, gameSummary.player1Elo, CellType.NUMERIC)
+        populateCell(row, COL_IDX_PLAYER_1_NAME, gameSummary.player1Name, CellType.STRING, _dataCellStyle)
+        populateCell(row, COL_IDX_PLAYER_1_CORP, gameSummary.player1Corp, CellType.STRING, _dataCellStyle)
+        populateCell(row, COL_IDX_PLAYER_1_SCORE, gameSummary.player1Score, CellType.NUMERIC, _dataCellStyle)
+        populateCell(row, COL_IDX_PLAYER_1_ELO, gameSummary.player1Elo, CellType.NUMERIC, _dataCellStyle)
 
-        populateCell(row, COL_IDX_PLAYER_2_NAME, gameSummary.player2Name, CellType.STRING)
-        populateCell(row, COL_IDX_PLAYER_2_CORP, gameSummary.player2Corp, CellType.STRING)
-        populateCell(row, COL_IDX_PLAYER_2_SCORE, gameSummary.player2Score, CellType.NUMERIC)
-        populateCell(row, COL_IDX_PLAYER_2_ELO, gameSummary.player2Elo, CellType.NUMERIC)
+        populateCell(row, COL_IDX_PLAYER_2_NAME, gameSummary.player2Name, CellType.STRING, _dataCellStyle)
+        populateCell(row, COL_IDX_PLAYER_2_CORP, gameSummary.player2Corp, CellType.STRING, _dataCellStyle)
+        populateCell(row, COL_IDX_PLAYER_2_SCORE, gameSummary.player2Score, CellType.NUMERIC, _dataCellStyle)
+        populateCell(row, COL_IDX_PLAYER_2_ELO, gameSummary.player2Elo, CellType.NUMERIC, _dataCellStyle)
 
-        populateCell(row, COL_IDX_PLAYER_3_NAME, gameSummary.player3Name ?: "", CellType.STRING)
-        populateCell(row, COL_IDX_PLAYER_3_CORP, gameSummary.player3Corp, CellType.STRING)
-        populateCell(row, COL_IDX_PLAYER_3_SCORE, gameSummary.player3Score ?: "", CellType.NUMERIC)
-        populateCell(row, COL_IDX_PLAYER_3_ELO, gameSummary.player3Elo ?: "", CellType.NUMERIC)
+        populateCell(row, COL_IDX_PLAYER_3_NAME, gameSummary.player3Name ?: "", CellType.STRING, _dataCellStyle)
+        populateCell(row, COL_IDX_PLAYER_3_CORP, gameSummary.player3Corp, CellType.STRING, _dataCellStyle)
+        populateCell(row, COL_IDX_PLAYER_3_SCORE, gameSummary.player3Score ?: "", CellType.NUMERIC, _dataCellStyle)
+        populateCell(row, COL_IDX_PLAYER_3_ELO, gameSummary.player3Elo ?: "", CellType.NUMERIC, _dataCellStyle)
 
-        populateCell(row, COL_IDX_PLAYER_4_NAME, gameSummary.player4Name ?: "", CellType.STRING)
-        populateCell(row, COL_IDX_PLAYER_4_CORP, gameSummary.player4Corp, CellType.STRING)
-        populateCell(row, COL_IDX_PLAYER_4_SCORE, gameSummary.player4Score ?: "", CellType.NUMERIC)
-        populateCell(row, COL_IDX_PLAYER_4_ELO, gameSummary.player4Elo ?: "", CellType.NUMERIC)
+        populateCell(row, COL_IDX_PLAYER_4_NAME, gameSummary.player4Name ?: "", CellType.STRING, _dataCellStyle)
+        populateCell(row, COL_IDX_PLAYER_4_CORP, gameSummary.player4Corp, CellType.STRING, _dataCellStyle)
+        populateCell(row, COL_IDX_PLAYER_4_SCORE, gameSummary.player4Score ?: "", CellType.NUMERIC, _dataCellStyle)
+        populateCell(row, COL_IDX_PLAYER_4_ELO, gameSummary.player4Elo ?: "", CellType.NUMERIC, _dataCellStyle)
 
-        populateCell(row, COL_IDX_PLAYER_5_NAME, gameSummary.player5Name ?: "", CellType.STRING)
-        populateCell(row, COL_IDX_PLAYER_5_CORP, gameSummary.player5Corp, CellType.STRING)
-        populateCell(row, COL_IDX_PLAYER_5_SCORE, gameSummary.player5Score ?: "", CellType.NUMERIC)
-        populateCell(row, COL_IDX_PLAYER_5_ELO, gameSummary.player5Elo ?: "", CellType.NUMERIC)
+        populateCell(row, COL_IDX_PLAYER_5_NAME, gameSummary.player5Name ?: "", CellType.STRING, _dataCellStyle)
+        populateCell(row, COL_IDX_PLAYER_5_CORP, gameSummary.player5Corp, CellType.STRING, _dataCellStyle)
+        populateCell(row, COL_IDX_PLAYER_5_SCORE, gameSummary.player5Score ?: "", CellType.NUMERIC, _dataCellStyle)
+        populateCell(row, COL_IDX_PLAYER_5_ELO, gameSummary.player5Elo ?: "", CellType.NUMERIC, _dataCellStyle)
     }
 
-    private fun <T> populateCell(row: Row, columnIdx: Int, value: T, cellType: CellType) {
-        if (value != null) {
-            row
-                .createCell(columnIdx, cellType)
-                .setCellValue(value.toString())
-        }
-    }
-
-    private fun applyHeaderCellStyle(row: Row, cellStyle: XSSFCellStyle) {
-        row.cellIterator().forEach {
-            it.cellStyle = cellStyle
-        }
+    private fun <T> populateCell(row: Row, columnIdx: Int, value: T, cellType: CellType, cellStyle: XSSFCellStyle) {
+        val cell = row.createCell(columnIdx, cellType)
+        cell.cellStyle = cellStyle
+        cell.setCellValue(value?.toString() ?: "")
     }
 
 
