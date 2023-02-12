@@ -76,6 +76,7 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
         with(_sheet) {
             setColumnWidth(COL_IDX_TIMESTAMP, COL_WIDTH_TIMESTAMP)
             setColumnWidth(COL_IDX_BOARD, COL_WIDTH_BOARD)
+            setColumnWidth(COL_IDX_GENERATIONS, COL_WIDTH_GENERATIONS)
             setColumnWidth(COL_IDX_PLAYER_1_NAME, COL_WIDTH_PLAYER_NAME)
             setColumnWidth(COL_IDX_PLAYER_1_CORP, COL_WIDTH_PLAYER_CORP)
             setColumnWidth(COL_IDX_PLAYER_1_SCORE, COL_WIDTH_PLAYER_SCORE)
@@ -96,19 +97,18 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
             setColumnWidth(COL_IDX_PLAYER_5_CORP, COL_WIDTH_PLAYER_CORP)
             setColumnWidth(COL_IDX_PLAYER_5_SCORE, COL_WIDTH_PLAYER_SCORE)
             setColumnWidth(COL_IDX_PLAYER_5_ELO, COL_WIDTH_PLAYER_ELO)
-            setColumnWidth(COL_IDX_GENERATIONS, COL_WIDTH_GENERATIONS)
         }
     }
 
     private fun mergeAndBorderHeaderCells() {
         mergeAndBorderCells(RANGE_TIMESTAMP)
         mergeAndBorderCells(RANGE_BOARD)
+        mergeAndBorderCells(RANGE_GENERATIONS)
         mergeAndBorderCells(RANGE_PLAYER_1)
         mergeAndBorderCells(RANGE_PLAYER_2)
         mergeAndBorderCells(RANGE_PLAYER_3)
         mergeAndBorderCells(RANGE_PLAYER_4)
         mergeAndBorderCells(RANGE_PLAYER_5)
-        mergeAndBorderCells(RANGE_GENERATIONS)
     }
 
     private fun mergeAndBorderCells(range: CellRangeAddress) {
@@ -142,12 +142,12 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
         
         populateCell(headerRow, COL_IDX_TIMESTAMP, HEADER_STR_TIMESTAMP, CellType.STRING)
         populateCell(headerRow, COL_IDX_BOARD, HEADER_STR_BOARD, CellType.STRING)
+        populateCell(headerRow, COL_IDX_GENERATIONS, HEADER_STR_GENERATIONS, CellType.STRING)
         populateCell(headerRow, COL_IDX_PLAYER_1_NAME, HEADER_STR_PLAYER_1_NAME, CellType.STRING)
         populateCell(headerRow, COL_IDX_PLAYER_2_NAME, HEADER_STR_PLAYER_2_NAME, CellType.STRING)
         populateCell(headerRow, COL_IDX_PLAYER_3_NAME, HEADER_STR_PLAYER_3_NAME, CellType.STRING)
         populateCell(headerRow, COL_IDX_PLAYER_4_NAME, HEADER_STR_PLAYER_4_NAME, CellType.STRING)
         populateCell(headerRow, COL_IDX_PLAYER_5_NAME, HEADER_STR_PLAYER_5_NAME, CellType.STRING)
-        populateCell(headerRow, COL_IDX_GENERATIONS, HEADER_STR_GENERATIONS, CellType.STRING)
 
         applyHeaderCellStyle(headerRow, _topHeaderCellStyle)
     }
@@ -188,6 +188,7 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
 
         populateCell(row, COL_IDX_TIMESTAMP, gameSummary.timestamp, CellType.STRING)
         populateCell(row, COL_IDX_BOARD, gameSummary.board, CellType.STRING)
+        populateCell(row, COL_IDX_GENERATIONS, gameSummary.generations, CellType.NUMERIC)
 
         populateCell(row, COL_IDX_PLAYER_1_NAME, gameSummary.player1Name, CellType.STRING)
         populateCell(row, COL_IDX_PLAYER_1_CORP, gameSummary.player1Corp, CellType.STRING)
@@ -213,8 +214,6 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
         populateCell(row, COL_IDX_PLAYER_5_CORP, gameSummary.player5Corp, CellType.STRING)
         populateCell(row, COL_IDX_PLAYER_5_SCORE, gameSummary.player5Score ?: "", CellType.NUMERIC)
         populateCell(row, COL_IDX_PLAYER_5_ELO, gameSummary.player5Elo ?: "", CellType.NUMERIC)
-        
-        populateCell(row, COL_IDX_GENERATIONS, gameSummary.generations, CellType.NUMERIC)
     }
 
     private fun <T> populateCell(row: Row, columnIdx: Int, value: T, cellType: CellType) {
@@ -238,6 +237,7 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
         // header strings
         const val HEADER_STR_TIMESTAMP = "Timestamp"
         const val HEADER_STR_BOARD = "Board"
+        const val HEADER_STR_GENERATIONS = "Gens"
         const val HEADER_STR_PLAYER_1_NAME = "Player 1"
         const val HEADER_STR_PLAYER_2_NAME = "Player 2"
         const val HEADER_STR_PLAYER_3_NAME = "Player 3"
@@ -247,7 +247,6 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
         const val HEADER_STR_CORP = "Corporation"
         const val HEADER_STR_SCORE = "Score"
         const val HEADER_STR_ELO = "ELO"
-        const val HEADER_STR_GENERATIONS = "Gens"
 
         // row indices
         const val ROW_IDX_TOP_HEADER = 0
@@ -257,46 +256,46 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
         // column indices
         const val COL_IDX_TIMESTAMP = 0
         const val COL_IDX_BOARD = 1
-        const val COL_IDX_PLAYER_1_NAME = 2
-        const val COL_IDX_PLAYER_1_CORP = 3
-        const val COL_IDX_PLAYER_1_SCORE = 4
-        const val COL_IDX_PLAYER_1_ELO = 5
-        const val COL_IDX_PLAYER_2_NAME = 6
-        const val COL_IDX_PLAYER_2_CORP = 7
-        const val COL_IDX_PLAYER_2_SCORE = 8
-        const val COL_IDX_PLAYER_2_ELO = 9
-        const val COL_IDX_PLAYER_3_NAME = 10
-        const val COL_IDX_PLAYER_3_CORP = 11
-        const val COL_IDX_PLAYER_3_SCORE = 12
-        const val COL_IDX_PLAYER_3_ELO = 13
-        const val COL_IDX_PLAYER_4_NAME = 14
-        const val COL_IDX_PLAYER_4_CORP = 15
-        const val COL_IDX_PLAYER_4_SCORE = 16
-        const val COL_IDX_PLAYER_4_ELO = 17
-        const val COL_IDX_PLAYER_5_NAME = 18
-        const val COL_IDX_PLAYER_5_CORP = 19
-        const val COL_IDX_PLAYER_5_SCORE = 20
-        const val COL_IDX_PLAYER_5_ELO = 21
-        const val COL_IDX_GENERATIONS = 22
+        const val COL_IDX_GENERATIONS = 2
+        const val COL_IDX_PLAYER_1_NAME = 3
+        const val COL_IDX_PLAYER_1_CORP = 4
+        const val COL_IDX_PLAYER_1_SCORE = 5
+        const val COL_IDX_PLAYER_1_ELO = 6
+        const val COL_IDX_PLAYER_2_NAME = 7
+        const val COL_IDX_PLAYER_2_CORP = 8
+        const val COL_IDX_PLAYER_2_SCORE = 9
+        const val COL_IDX_PLAYER_2_ELO = 10
+        const val COL_IDX_PLAYER_3_NAME = 11
+        const val COL_IDX_PLAYER_3_CORP = 12
+        const val COL_IDX_PLAYER_3_SCORE = 13
+        const val COL_IDX_PLAYER_3_ELO = 14
+        const val COL_IDX_PLAYER_4_NAME = 15
+        const val COL_IDX_PLAYER_4_CORP = 16
+        const val COL_IDX_PLAYER_4_SCORE = 17
+        const val COL_IDX_PLAYER_4_ELO = 18
+        const val COL_IDX_PLAYER_5_NAME = 19
+        const val COL_IDX_PLAYER_5_CORP = 20
+        const val COL_IDX_PLAYER_5_SCORE = 21
+        const val COL_IDX_PLAYER_5_ELO = 22
 
         // column widths
         const val COL_WIDTH_TIMESTAMP = 6000
         const val COL_WIDTH_BOARD = 2500
+        const val COL_WIDTH_GENERATIONS = 2500
         const val COL_WIDTH_PLAYER_NAME = 4000
         const val COL_WIDTH_PLAYER_CORP = 5500
         const val COL_WIDTH_PLAYER_SCORE = 2500
         const val COL_WIDTH_PLAYER_ELO = 2500
-        const val COL_WIDTH_GENERATIONS = 2500
 
         // cell range addresses (for merged regions and auto-filters)
         val RANGE_TIMESTAMP = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, COL_IDX_TIMESTAMP, COL_IDX_TIMESTAMP)
         val RANGE_BOARD = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, COL_IDX_BOARD, COL_IDX_BOARD)
+        val RANGE_GENERATIONS = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, COL_IDX_GENERATIONS, COL_IDX_GENERATIONS)
         val RANGE_PLAYER_1 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, COL_IDX_PLAYER_1_NAME, COL_IDX_PLAYER_1_ELO)
         val RANGE_PLAYER_2 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, COL_IDX_PLAYER_2_NAME, COL_IDX_PLAYER_2_ELO)
         val RANGE_PLAYER_3 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, COL_IDX_PLAYER_3_NAME, COL_IDX_PLAYER_3_ELO)
         val RANGE_PLAYER_4 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, COL_IDX_PLAYER_4_NAME, COL_IDX_PLAYER_4_ELO)
         val RANGE_PLAYER_5 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, COL_IDX_PLAYER_5_NAME, COL_IDX_PLAYER_5_ELO)
-        val RANGE_GENERATIONS = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, COL_IDX_GENERATIONS, COL_IDX_GENERATIONS)
         val RANGE_FILTERS = CellRangeAddress(ROW_IDX_BOTTOM_HEADER, ROW_IDX_BOTTOM_HEADER, COL_IDX_TIMESTAMP, COL_IDX_GENERATIONS)
 
         // border style
