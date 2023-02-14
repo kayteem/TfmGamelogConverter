@@ -1,4 +1,4 @@
-package de.kayteem.apps.tfmgamelogconverter.controller.export
+package de.kayteem.apps.tfmgamelogconverter.controller.xlsxExport
 
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row

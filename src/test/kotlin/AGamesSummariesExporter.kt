@@ -1,7 +1,5 @@
-import com.fasterxml.jackson.dataformat.csv.CsvMapper
-import de.kayteem.apps.tfmgamelogconverter.controller.export.GamesSummariesExporter
-import de.kayteem.apps.tfmgamelogconverter.controller.export.GamesSummariesCsvExporter
-import de.kayteem.apps.tfmgamelogconverter.controller.export.GamesSummariesExcelExporter
+import de.kayteem.apps.tfmgamelogconverter.controller.xlsxExport.GamesSummariesExcelExporter
+import de.kayteem.apps.tfmgamelogconverter.controller.xlsxExport.GamesSummariesExporter
 import org.junit.Assert
 import org.junit.Test
 import java.nio.file.Path
@@ -19,21 +17,6 @@ class AGamesSummariesExporter {
 
 
     // test cases
-    @Test
-    fun canExportGameLogsToCsv() {
-
-        // setup
-        val gameSummaries = listOf(SUMMARY_GAME_1, SUMMARY_GAME_2)
-        exporter = GamesSummariesCsvExporter(CsvMapper())
-
-        // execution
-        exporter.export(PATH_CSV, gameSummaries)
-
-        // post-condition
-        Assert.assertTrue(PATH_CSV.toFile().exists())
-        Assert.assertTrue(PATH_CSV.toFile().readText().isNotEmpty())
-    }
-
     @Test
     fun canExportGameLogsToExcel() {
 
@@ -54,7 +37,6 @@ class AGamesSummariesExporter {
 
         // paths
         private val PATH_ARTIFACT: Path = Paths.get("out/artifacts/TfmGamelogConverter_jar/")
-        val PATH_CSV: Path = PATH_ARTIFACT.resolve("TfmGamesOverview.csv")
         val PATH_EXCEL: Path = PATH_ARTIFACT.resolve("TfmGamesOverview.xlsx")
 
         // game summaries

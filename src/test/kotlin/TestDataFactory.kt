@@ -1,4 +1,4 @@
-import de.kayteem.apps.tfmgamelogconverter.model.csvExport.GameSummary
+import de.kayteem.apps.tfmgamelogconverter.model.xlsxExport.GameSummary
 import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.*
 import kotlin.math.roundToInt
 

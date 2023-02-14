@@ -1,6 +1,6 @@
-package de.kayteem.apps.tfmgamelogconverter.controller.export
+package de.kayteem.apps.tfmgamelogconverter.controller.xlsxExport
 
-import de.kayteem.apps.tfmgamelogconverter.model.csvExport.GameSummary
+import de.kayteem.apps.tfmgamelogconverter.model.xlsxExport.GameSummary
 import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.ss.util.CellRangeAddress

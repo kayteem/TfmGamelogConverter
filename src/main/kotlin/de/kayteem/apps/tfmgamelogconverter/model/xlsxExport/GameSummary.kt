@@ -1,4 +1,4 @@
-package de.kayteem.apps.tfmgamelogconverter.model.csvExport
+package de.kayteem.apps.tfmgamelogconverter.model.xlsxExport
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
