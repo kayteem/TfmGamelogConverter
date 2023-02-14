@@ -3,9 +3,9 @@ package de.kayteem.apps.tfmgamelogconverter.model.jsonImport
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 /**
- * Created by Tobias Mielke
- * Created on 20.01.2023
- * Changed on 20.01.2023
+ * Data class required for importing root/players/<N> elements from JSON.
+ *
+ * Author: Tobias Mielke
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Player(

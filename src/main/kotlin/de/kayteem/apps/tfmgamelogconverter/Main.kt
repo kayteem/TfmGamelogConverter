@@ -2,19 +2,19 @@ package de.kayteem.apps.tfmgamelogconverter
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import de.kayteem.apps.tfmgamelogconverter.controller.xlsxExport.GamesSummariesExcelExporter
+import de.kayteem.apps.tfmgamelogconverter.controller.export.plays.PlaysExcelExporter
 import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogImporter
 import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogJsonImporter
-import de.kayteem.apps.tfmgamelogconverter.model.xlsxExport.GameSummary
+import de.kayteem.apps.tfmgamelogconverter.model.xlsxExport.Play
 import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.GameLog
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.math.roundToInt
 
 /**
- * Created by Tobias Mielke
- * Created on 21.01.2023
- * Changed on 22.01.2023
+ * Main class processing the transformation from JSON game logs to the Excel format.
+ *
+ * Author: Tobias Mielke
  */
 fun main() {
 
@@ -27,8 +27,8 @@ fun main() {
     val gameLogs: List<GameLog> = importer.importAll(executionPath)
     println("Import of ${gameLogs.size} json files finished")
 
-    // convert GameLogs to GameSummaries
-    val gameSummaries = gameLogs.map {
+    // convert GameLogs to Plays
+    val plays = gameLogs.map {
         val player1 = it.players.player1
         val player2 = it.players.player2
         val player3 = it.players.player3
@@ -36,9 +36,10 @@ fun main() {
         val player5 = it.players.player5
         val finalScores = it.finalScores()
 
-        GameSummary(
+        Play(
             timestamp = it.start,
             board = it.board,
+            generations = it.generations(),
             player1Name = player1.name,
             player1Corp = player1.corporation,
             player1Elo = player1.elo.roundToInt(),
@@ -58,16 +59,15 @@ fun main() {
             player5Name = player5?.name,
             player5Corp = player5?.corporation,
             player5Elo = player5?.elo?.roundToInt(),
-            player5Score = finalScores[player5],
-            generations = it.generations()
+            player5Score = finalScores[player5]
         )
     }
 
     // build the exporter
-    val exporter = GamesSummariesExcelExporter()
+    val exporter = PlaysExcelExporter()
 
-    // export all game summaries to CSV
-    val excelPath: Path = executionPath.resolve("TfmGamesOverview.xlsx")
-    exporter.export(excelPath, gameSummaries)
-    println("Export of ${gameSummaries.size} game summaries finished: $excelPath")
+    // export all plays
+    val excelPath: Path = executionPath.resolve("TfmGameData.xlsx")
+    exporter.export(excelPath, plays)
+    println("Export of ${plays.size} plays finished: $excelPath")
 }

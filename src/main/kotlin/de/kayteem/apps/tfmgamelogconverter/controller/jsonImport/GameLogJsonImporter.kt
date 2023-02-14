@@ -6,12 +6,12 @@ import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 
 /**
- * Created by Tobias Mielke
- * Created on 20.01.2023
- * Changed on 20.01.2023
+ * Implementation for importing GameLog objects from json files.
  *
  * JSON import tutorial:
  * https://stackabuse.com/reading-and-writing-json-in-kotlin-with-jackson/
+ *
+ * Author: Tobias Mielke
  */
 class GameLogJsonImporter(private val mapper: ObjectMapper) : GameLogImporter {
 

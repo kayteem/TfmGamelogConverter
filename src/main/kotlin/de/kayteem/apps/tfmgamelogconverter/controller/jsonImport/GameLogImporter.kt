@@ -4,9 +4,9 @@ import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.GameLog
 import java.nio.file.Path
 
 /**
- * Created by Tobias Mielke
- * Created on 20.01.2023
- * Changed on 20.01.2023
+ * Interface for importing GameLog objects from files.
+ *
+ * Author: Tobias Mielke
  */
 interface GameLogImporter {
 

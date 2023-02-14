@@ -1,11 +1,11 @@
-import de.kayteem.apps.tfmgamelogconverter.model.xlsxExport.GameSummary
+import de.kayteem.apps.tfmgamelogconverter.model.xlsxExport.Play
 import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.*
 import kotlin.math.roundToInt
 
 /**
- * Created by Tobias Mielke
- * Created on 21.01.2023
- * Changed on 22.01.2023
+ * Utility object for creating test data
+ *
+ * Author: Tobias Mielke
  */
 object TestDataFactory {
 
@@ -60,14 +60,15 @@ object TestDataFactory {
         )
     }
 
-    fun buildSummaryGame1(): GameSummary {
+    fun buildPlay1(): Play {
         val logGame1 = buildLogGame1()
         val player1 = logGame1.players.player1
         val player2 = logGame1.players.player2
 
-        return GameSummary(
+        return Play(
             timestamp = logGame1.start,
             board = logGame1.board,
+            generations = logGame1.generations(),
             player1Name = player1.name,
             player1Corp = player1.corporation,
             player1Elo = player1.elo.roundToInt(),
@@ -75,8 +76,7 @@ object TestDataFactory {
             player2Name = player2.name,
             player2Corp = player2.corporation,
             player2Elo = player2.elo.roundToInt(),
-            player2Score = logGame1.finalScores()[player2] ?: 0,
-            generations = logGame1.generations()
+            player2Score = logGame1.finalScores()[player2] ?: 0
         )
     }
 
@@ -132,14 +132,15 @@ object TestDataFactory {
         )
     }
 
-    fun buildSummaryGame2(): GameSummary {
+    fun buildPlay2(): Play {
         val logGame2 = buildLogGame2()
         val player1 = logGame2.players.player1
         val player2 = logGame2.players.player2
 
-        return GameSummary(
+        return Play(
             timestamp = logGame2.start,
             board = logGame2.board,
+            generations = logGame2.generations(),
             player1Name = player1.name,
             player1Corp = player1.corporation,
             player1Elo = player1.elo.roundToInt(),
@@ -147,8 +148,7 @@ object TestDataFactory {
             player2Name = player2.name,
             player2Corp = player2.corporation,
             player2Elo = player2.elo.roundToInt(),
-            player2Score = logGame2.finalScores()[player2] ?: 0,
-            generations = logGame2.generations()
+            player2Score = logGame2.finalScores()[player2] ?: 0
         )
     }
 

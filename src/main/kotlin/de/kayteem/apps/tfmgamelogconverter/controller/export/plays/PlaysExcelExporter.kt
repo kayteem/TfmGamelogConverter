@@ -1,6 +1,8 @@
-package de.kayteem.apps.tfmgamelogconverter.controller.xlsxExport
+package de.kayteem.apps.tfmgamelogconverter.controller.export.plays
 
-import de.kayteem.apps.tfmgamelogconverter.model.xlsxExport.GameSummary
+import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellBuilder
+import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellStyleBuilder
+import de.kayteem.apps.tfmgamelogconverter.model.xlsxExport.Play
 import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.ss.util.CellRangeAddress
@@ -13,17 +15,16 @@ import java.nio.file.Path
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-
 /**
- * Created by Tobias Mielke
- * Created on 22.01.2023
- * Changed on 22.01.2023
+ * Implementation for exporting Play objects to an Excel file.
  *
  * Excel export tutorials:
  * https://www.developersoapbox.com/basic-read-and-write-excel-using-kotlin/
  * https://www.baeldung.com/apache-poi-background-color
+ *
+ * Author: Tobias Mielke
  */
-class GamesSummariesExcelExporter : GamesSummariesExporter {
+class PlaysExcelExporter : PlaysExporter {
 
     // members
     private lateinit var _workbook: XSSFWorkbook
@@ -38,7 +39,7 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
 
 
     // interface
-    override fun export(path: Path, gamesSummaries: List<GameSummary>) {
+    override fun export(path: Path, plays: List<Play>) {
         _workbook = XSSFWorkbook()
         _sheet = _workbook.createSheet()
         _cellStyleBuilder = CellStyleBuilder(_workbook)
@@ -79,7 +80,7 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
             .build()
 
         setColumnsWidths()
-        populateSheet(gamesSummaries)
+        populateSheet(plays)
         mergeAndBorderHeaderCells()
 
         val fos = FileOutputStream(path.toFile())
@@ -137,7 +138,7 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
         RegionUtil.setBorderBottom(BORDER_STYLE, range, _sheet)
     }
 
-    private fun populateSheet(gamesSummaries: List<GameSummary>) {
+    private fun populateSheet(plays: List<Play>) {
 
         // populate header rows
         populateTopHeaderRow()
@@ -145,8 +146,8 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
 
         // populate data rows
         var firstDataRowIdx = ROW_IDX_FIRST_DATA_ROW
-        gamesSummaries.forEach { summary ->
-            populateDataRow(firstDataRowIdx, summary)
+        plays.forEach { play ->
+            populateDataRow(firstDataRowIdx, play)
             firstDataRowIdx++
         }
 
@@ -204,42 +205,42 @@ class GamesSummariesExcelExporter : GamesSummariesExporter {
         }
     }
 
-    private fun populateDataRow(rowIdx: Int, gameSummary: GameSummary) {
+    private fun populateDataRow(rowIdx: Int, play: Play) {
         val row = _sheet.createRow(rowIdx)
 
         val cellBuilder = CellBuilder(row, _stringDataCenterCellStyle)
 
         with(cellBuilder) {
-            val date = LocalDateTime.parse(gameSummary.timestamp, DateTimeFormatter.ISO_DATE_TIME)
+            val date = LocalDateTime.parse(play.timestamp, DateTimeFormatter.ISO_DATE_TIME)
 
             columnIdx(COL_IDX_TIMESTAMP).cellStyle(_timestampCellStyle).build(date)
-            columnIdx(COL_IDX_BOARD).cellStyle(_bottomHeaderCellStyle).build(gameSummary.board)
-            columnIdx(COL_IDX_GENERATIONS).cellStyle(_bottomHeaderCellStyle).build(gameSummary.generations)
+            columnIdx(COL_IDX_BOARD).cellStyle(_bottomHeaderCellStyle).build(play.board)
+            columnIdx(COL_IDX_GENERATIONS).cellStyle(_bottomHeaderCellStyle).build(play.generations)
             
-            columnIdx(COL_IDX_PLAYER_1_NAME).cellStyle(_stringDataCenterCellStyle).build(gameSummary.player1Name)
-            columnIdx(COL_IDX_PLAYER_1_CORP).cellStyle(_stringDataCenterCellStyle).build(gameSummary.player1Corp)
-            columnIdx(COL_IDX_PLAYER_1_SCORE).cellStyle(_intDataCellStyle).build(gameSummary.player1Score)
-            columnIdx(COL_IDX_PLAYER_1_ELO).cellStyle(_intDataCellStyle).build(gameSummary.player1Elo)
+            columnIdx(COL_IDX_PLAYER_1_NAME).cellStyle(_stringDataCenterCellStyle).build(play.player1Name)
+            columnIdx(COL_IDX_PLAYER_1_CORP).cellStyle(_stringDataCenterCellStyle).build(play.player1Corp)
+            columnIdx(COL_IDX_PLAYER_1_SCORE).cellStyle(_intDataCellStyle).build(play.player1Score)
+            columnIdx(COL_IDX_PLAYER_1_ELO).cellStyle(_intDataCellStyle).build(play.player1Elo)
 
-            columnIdx(COL_IDX_PLAYER_2_NAME).cellStyle(_stringDataCenterCellStyle).build(gameSummary.player2Name)
-            columnIdx(COL_IDX_PLAYER_2_CORP).cellStyle(_stringDataCenterCellStyle).build(gameSummary.player2Corp)
-            columnIdx(COL_IDX_PLAYER_2_SCORE).cellStyle(_intDataCellStyle).build(gameSummary.player2Score)
-            columnIdx(COL_IDX_PLAYER_2_ELO).cellStyle(_intDataCellStyle).build(gameSummary.player2Elo)
+            columnIdx(COL_IDX_PLAYER_2_NAME).cellStyle(_stringDataCenterCellStyle).build(play.player2Name)
+            columnIdx(COL_IDX_PLAYER_2_CORP).cellStyle(_stringDataCenterCellStyle).build(play.player2Corp)
+            columnIdx(COL_IDX_PLAYER_2_SCORE).cellStyle(_intDataCellStyle).build(play.player2Score)
+            columnIdx(COL_IDX_PLAYER_2_ELO).cellStyle(_intDataCellStyle).build(play.player2Elo)
 
-            columnIdx(COL_IDX_PLAYER_3_NAME).cellStyle(_stringDataCenterCellStyle).build(gameSummary.player3Name)
-            columnIdx(COL_IDX_PLAYER_3_CORP).cellStyle(_stringDataCenterCellStyle).build(gameSummary.player3Corp)
-            columnIdx(COL_IDX_PLAYER_3_SCORE).cellStyle(_intDataCellStyle).build(gameSummary.player3Score)
-            columnIdx(COL_IDX_PLAYER_3_ELO).cellStyle(_intDataCellStyle).build(gameSummary.player3Elo)
+            columnIdx(COL_IDX_PLAYER_3_NAME).cellStyle(_stringDataCenterCellStyle).build(play.player3Name)
+            columnIdx(COL_IDX_PLAYER_3_CORP).cellStyle(_stringDataCenterCellStyle).build(play.player3Corp)
+            columnIdx(COL_IDX_PLAYER_3_SCORE).cellStyle(_intDataCellStyle).build(play.player3Score)
+            columnIdx(COL_IDX_PLAYER_3_ELO).cellStyle(_intDataCellStyle).build(play.player3Elo)
 
-            columnIdx(COL_IDX_PLAYER_4_NAME).cellStyle(_stringDataCenterCellStyle).build(gameSummary.player4Name)
-            columnIdx(COL_IDX_PLAYER_4_CORP).cellStyle(_stringDataCenterCellStyle).build(gameSummary.player4Corp)
-            columnIdx(COL_IDX_PLAYER_4_SCORE).cellStyle(_intDataCellStyle).build(gameSummary.player4Score)
-            columnIdx(COL_IDX_PLAYER_4_ELO).cellStyle(_intDataCellStyle).build(gameSummary.player4Elo)
+            columnIdx(COL_IDX_PLAYER_4_NAME).cellStyle(_stringDataCenterCellStyle).build(play.player4Name)
+            columnIdx(COL_IDX_PLAYER_4_CORP).cellStyle(_stringDataCenterCellStyle).build(play.player4Corp)
+            columnIdx(COL_IDX_PLAYER_4_SCORE).cellStyle(_intDataCellStyle).build(play.player4Score)
+            columnIdx(COL_IDX_PLAYER_4_ELO).cellStyle(_intDataCellStyle).build(play.player4Elo)
 
-            columnIdx(COL_IDX_PLAYER_5_NAME).cellStyle(_stringDataCenterCellStyle).build(gameSummary.player5Name)
-            columnIdx(COL_IDX_PLAYER_5_CORP).cellStyle(_stringDataCenterCellStyle).build(gameSummary.player5Corp)
-            columnIdx(COL_IDX_PLAYER_5_SCORE).cellStyle(_intDataCellStyle).build(gameSummary.player5Score)
-            columnIdx(COL_IDX_PLAYER_5_ELO).cellStyle(_intDataCellStyle).build(gameSummary.player5Elo)
+            columnIdx(COL_IDX_PLAYER_5_NAME).cellStyle(_stringDataCenterCellStyle).build(play.player5Name)
+            columnIdx(COL_IDX_PLAYER_5_CORP).cellStyle(_stringDataCenterCellStyle).build(play.player5Corp)
+            columnIdx(COL_IDX_PLAYER_5_SCORE).cellStyle(_intDataCellStyle).build(play.player5Score)
+            columnIdx(COL_IDX_PLAYER_5_ELO).cellStyle(_intDataCellStyle).build(play.player5Elo)
         }
     }
 

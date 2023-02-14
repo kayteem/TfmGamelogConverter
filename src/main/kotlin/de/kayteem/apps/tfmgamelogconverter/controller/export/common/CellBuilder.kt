@@ -1,4 +1,4 @@
-package de.kayteem.apps.tfmgamelogconverter.controller.xlsxExport
+package de.kayteem.apps.tfmgamelogconverter.controller.export.common
 
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
@@ -6,11 +6,9 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import java.time.LocalDateTime
 
 /**
- * Created by Tobias Mielke
- * Created on 12.02.2023
- * Changed on 12.02.2023
- *
  * A builder for creating cells in an Excel workbook.
+ *
+ * Author: Tobias Mielke
  */
 class CellBuilder(private val row: Row, defaultCellStyle: XSSFCellStyle) {
 

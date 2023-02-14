@@ -1,15 +1,13 @@
-package de.kayteem.apps.tfmgamelogconverter.controller.xlsxExport
+package de.kayteem.apps.tfmgamelogconverter.controller.export.common
 
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 /**
- * Created by Tobias Mielke
- * Created on 12.02.2023
- * Changed on 12.02.2023
- *
  * A Builder for creating cell styles for Excel workbooks.
+ *
+ * Author: Tobias Mielke
  */
 class CellStyleBuilder(private val workbook: XSSFWorkbook) {
 
