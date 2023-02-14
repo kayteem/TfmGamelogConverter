@@ -41,7 +41,7 @@ class PlaysExcelExporter : PlaysExporter {
     // interface
     override fun export(path: Path, plays: List<Play>) {
         _workbook = XSSFWorkbook()
-        _sheet = _workbook.createSheet()
+        _sheet = _workbook.createSheet("Plays")
         _cellStyleBuilder = CellStyleBuilder(_workbook)
 
         _topHeaderCellStyle = _cellStyleBuilder
@@ -310,7 +310,7 @@ class PlaysExcelExporter : PlaysExporter {
         val RANGE_PLAYER_3 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, COL_IDX_PLAYER_3_NAME, COL_IDX_PLAYER_3_ELO)
         val RANGE_PLAYER_4 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, COL_IDX_PLAYER_4_NAME, COL_IDX_PLAYER_4_ELO)
         val RANGE_PLAYER_5 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, COL_IDX_PLAYER_5_NAME, COL_IDX_PLAYER_5_ELO)
-        val RANGE_FILTERS = CellRangeAddress(ROW_IDX_BOTTOM_HEADER, ROW_IDX_BOTTOM_HEADER, COL_IDX_TIMESTAMP, COL_IDX_GENERATIONS)
+        val RANGE_FILTERS = CellRangeAddress(ROW_IDX_BOTTOM_HEADER, ROW_IDX_BOTTOM_HEADER, COL_IDX_TIMESTAMP, COL_IDX_PLAYER_5_ELO)
 
         // border style
         val BORDER_STYLE = BorderStyle.THIN
