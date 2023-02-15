@@ -3,16 +3,10 @@ package de.kayteem.apps.tfmgamelogconverter.controller.export.style
 import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellBuilder
 import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.PlaysSheetFactory.Companion.PlaysColumns
 import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.PlaysSheetFactory.Companion.PlaysColumns.*
-import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.INT_DATA_STYLE
-import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.PRIMARY_HEADER_STYLE
-import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.SECONDARY_HEADER_STYLE
-import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.STRING_DATA_BOLD_STYLE
-import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.STRING_DATA_STYLE
-import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.TIMESTAMP_DATA_STYLE
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Player
+import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
-
 /**
  * Creates and manages cell styles for all sheets.
  *
@@ -20,132 +14,162 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
  */
 class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : AbstractStyleManager(workbook) {
 
-    // initialization
-    init {
-        registerStyle(
-            PRIMARY_HEADER_STYLE,
-            cellStyleBuilder
-                .fontSize(12)
-                .bold(true)
-                .stringFormat()
-                .backgroundColor(IndexedColors.LIGHT_GREEN)
-                .build()
-        )
-
-        registerStyle(
-            SECONDARY_HEADER_STYLE,
-            cellStyleBuilder
-                .fontSize(10)
-                .bold(false)
-                .stringFormat()
-                .backgroundColor(IndexedColors.LIGHT_GREEN)
-                .build()
-        )
-
-        registerStyle(
-            STRING_DATA_STYLE,
-            cellStyleBuilder
-                .fontSize(10)
-                .bold(false)
-                .stringFormat()
-                .backgroundColor(IndexedColors.WHITE)
-                .build()
-        )
-
-        registerStyle(
-            STRING_DATA_BOLD_STYLE,
-            cellStyleBuilder
-                .fontSize(10)
-                .bold(true)
-                .stringFormat()
-                .backgroundColor(IndexedColors.WHITE)
-                .build()
-        )
-
-        registerStyle(
-            INT_DATA_STYLE,
-            cellStyleBuilder
-                .fontSize(10)
-                .bold(false)
-                .intFormat()
-                .backgroundColor(IndexedColors.WHITE)
-                .build()
-        )
-
-        registerStyle(
-            TIMESTAMP_DATA_STYLE,
-            cellStyleBuilder
-                .fontSize(10)
-                .bold(false)
-                .dateFormat()
-                .backgroundColor(IndexedColors.LIGHT_GREEN)
-                .build()
-        )
-    }
-
-
     // interface
     fun applyStyle(column: PlaysColumns, players: List<Player>, winner: Player?, cellBuilder: CellBuilder): CellBuilder {
         return when(column) {
-            TIMESTAMP       -> applyStyle(SECONDARY_HEADER_STYLE, cellBuilder)
-            BOARD           -> applyStyle(SECONDARY_HEADER_STYLE, cellBuilder)
-            GENERATIONS     -> applyStyle(SECONDARY_HEADER_STYLE, cellBuilder)
+            TIMESTAMP       -> applyTimestampStyle(cellBuilder)
+            BOARD           -> applySecondaryHeaderStyle(cellBuilder)
+            GENERATIONS     -> applySecondaryHeaderStyle(cellBuilder)
 
-            PLAYER_1_NAME   -> applyPlayerNameStyle(players.getOrNull(0), username, cellBuilder)
-            PLAYER_1_CORP   -> applyStyle(STRING_DATA_STYLE, cellBuilder)
-            PLAYER_1_SCORE  -> applyScoreStyle(players.getOrNull(0), winner, cellBuilder)
-            PLAYER_1_ELO    -> applyEloStyle(players.getOrNull(0), cellBuilder)
+            PLAYER_1_NAME   -> applyPlayerNameStyle(players.getOrNull(0), winner, false, cellBuilder)
+            PLAYER_1_CORP   -> applyCorpStyle(false, cellBuilder)
+            PLAYER_1_SCORE  -> applyScoreStyle(players.getOrNull(0), winner, false, cellBuilder)
+            PLAYER_1_ELO    -> applyEloStyle(false, cellBuilder)
 
-            PLAYER_2_NAME   -> applyPlayerNameStyle(players.getOrNull(1), username, cellBuilder)
-            PLAYER_2_CORP   -> applyStyle(STRING_DATA_STYLE, cellBuilder)
-            PLAYER_2_SCORE  -> applyScoreStyle(players.getOrNull(1), winner, cellBuilder)
-            PLAYER_2_ELO    -> applyEloStyle(players.getOrNull(2), cellBuilder)
+            PLAYER_2_NAME   -> applyPlayerNameStyle(players.getOrNull(1), winner, true, cellBuilder)
+            PLAYER_2_CORP   -> applyCorpStyle(true, cellBuilder)
+            PLAYER_2_SCORE  -> applyScoreStyle(players.getOrNull(1), winner, true, cellBuilder)
+            PLAYER_2_ELO    -> applyEloStyle(true, cellBuilder)
 
-            PLAYER_3_NAME   -> applyPlayerNameStyle(players.getOrNull(2), username, cellBuilder)
-            PLAYER_3_CORP   -> applyStyle(STRING_DATA_STYLE, cellBuilder)
-            PLAYER_3_SCORE  -> applyScoreStyle(players.getOrNull(2), winner, cellBuilder)
-            PLAYER_3_ELO    -> applyEloStyle(players.getOrNull(2), cellBuilder)
+            PLAYER_3_NAME   -> applyPlayerNameStyle(players.getOrNull(2), winner, false, cellBuilder)
+            PLAYER_3_CORP   -> applyCorpStyle(false, cellBuilder)
+            PLAYER_3_SCORE  -> applyScoreStyle(players.getOrNull(2), winner, false, cellBuilder)
+            PLAYER_3_ELO    -> applyEloStyle(false, cellBuilder)
 
-            PLAYER_4_NAME   -> applyPlayerNameStyle(players.getOrNull(3), username, cellBuilder)
-            PLAYER_4_CORP   -> applyStyle(STRING_DATA_STYLE, cellBuilder)
-            PLAYER_4_SCORE  -> applyScoreStyle(players.getOrNull(3), winner, cellBuilder)
-            PLAYER_4_ELO    -> applyEloStyle(players.getOrNull(3), cellBuilder)
+            PLAYER_4_NAME   -> applyPlayerNameStyle(players.getOrNull(3), winner, true, cellBuilder)
+            PLAYER_4_CORP   -> applyCorpStyle(true, cellBuilder)
+            PLAYER_4_SCORE  -> applyScoreStyle(players.getOrNull(3), winner, true, cellBuilder)
+            PLAYER_4_ELO    -> applyEloStyle(true, cellBuilder)
 
-            PLAYER_5_NAME   -> applyPlayerNameStyle(players.getOrNull(4), username, cellBuilder)
-            PLAYER_5_CORP   -> applyStyle(STRING_DATA_STYLE, cellBuilder)
-            PLAYER_5_SCORE  -> applyScoreStyle(players.getOrNull(4), winner, cellBuilder)
-            PLAYER_5_ELO    -> applyEloStyle(players.getOrNull(4), cellBuilder)
+            PLAYER_5_NAME   -> applyPlayerNameStyle(players.getOrNull(4), winner, false, cellBuilder)
+            PLAYER_5_CORP   -> applyCorpStyle(false, cellBuilder)
+            PLAYER_5_SCORE  -> applyScoreStyle(players.getOrNull(4), winner, false, cellBuilder)
+            PLAYER_5_ELO    -> applyEloStyle(false, cellBuilder)
         }
+    }
+
+    fun applyPrimaryHeaderStyle(cellBuilder: CellBuilder): CellBuilder {
+        val style = cellStyleBuilder
+            .fontSize(12)
+            .bold(true)
+            .stringFormat()
+            .textColor(IndexedColors.BLACK)
+            .cellForegroundColor(IndexedColors.LIGHT_GREEN)
+            .cellPattern(FillPatternType.SOLID_FOREGROUND)
+            .build()
+
+        return cellBuilder.cellStyle(style)
+    }
+
+    fun applySecondaryHeaderStyle(cellBuilder: CellBuilder): CellBuilder {
+        val style = cellStyleBuilder
+            .fontSize(10)
+            .bold(false)
+            .stringFormat()
+            .textColor(IndexedColors.BLACK)
+            .cellForegroundColor(IndexedColors.LIGHT_GREEN)
+            .cellPattern(FillPatternType.SOLID_FOREGROUND)
+            .build()
+
+        return cellBuilder.cellStyle(style)
     }
 
 
     // helpers
-    private fun applyPlayerNameStyle(player: Player?, username: String, cellBuilder: CellBuilder): CellBuilder {
-        val styleName = when {
-            player != null && player.name == username -> STRING_DATA_BOLD_STYLE
-            else -> STRING_DATA_STYLE
-        }
+    private fun applyTimestampStyle(cellBuilder: CellBuilder): CellBuilder {
+        val style = cellStyleBuilder
+            .fontSize(10)
+            .bold(false)
+            .dateFormat()
+            .textColor(IndexedColors.BLACK)
+            .cellForegroundColor(IndexedColors.LIGHT_GREEN)
+            .cellPattern(FillPatternType.SOLID_FOREGROUND)
+            .build()
 
-        return applyStyle(styleName, cellBuilder)
+        return cellBuilder.cellStyle(style)
     }
 
-    private fun applyScoreStyle(player: Player?, winner: Player?, cellBuilder: CellBuilder): CellBuilder {
-        val styleName = when (player) {
-            null -> STRING_DATA_STYLE
-            winner -> SECONDARY_HEADER_STYLE
-            else -> INT_DATA_STYLE
-        }
+    private fun applyPlayerNameStyle(player: Player?, winner: Player?, shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
+        val isUser = isUser(player)
+        val textColor = getWinnerOrLoserTextColor(player, isUser, winner)
 
-        return applyStyle(styleName, cellBuilder)
+        val style = cellStyleBuilder
+            .fontSize(10)
+            .bold(isUser)
+            .stringFormat()
+            .textColor(textColor)
+            .cellForegroundColor(getBgColor(shadowed))
+            .cellPattern(getPattern(shadowed))
+            .build()
+
+        return cellBuilder.cellStyle(style)
     }
 
-    private fun applyEloStyle(player: Player?, cellBuilder: CellBuilder): CellBuilder {
-        val styleName = when {
-            player != null -> INT_DATA_STYLE
-            else -> STRING_DATA_STYLE
-        }
+    private fun applyCorpStyle(shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
+        val style = cellStyleBuilder
+            .fontSize(10)
+            .bold(false)
+            .stringFormat()
+            .textColor(IndexedColors.BLACK)
+            .cellForegroundColor(getBgColor(shadowed))
+            .cellPattern(getPattern(shadowed))
+            .build()
 
-        return applyStyle(styleName, cellBuilder)
+        return cellBuilder.cellStyle(style)
+    }
+
+    private fun applyScoreStyle(player: Player?, winner: Player?, shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
+        val isUser = isUser(player)
+        val textColor = getWinnerOrLoserTextColor(player, isUser, winner)
+
+        val style = cellStyleBuilder
+            .fontSize(10)
+            .bold(true)
+            .intFormat()
+            .textColor(textColor)
+            .cellForegroundColor(getBgColor(shadowed))
+            .cellPattern(getPattern(shadowed))
+            .build()
+
+        return cellBuilder.cellStyle(style)
+    }
+
+    private fun applyEloStyle(shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
+        val style = cellStyleBuilder
+            .fontSize(10)
+            .bold(false)
+            .intFormat()
+            .textColor(IndexedColors.BLACK)
+            .cellForegroundColor(getBgColor(shadowed))
+            .cellPattern(getPattern(shadowed))
+            .build()
+
+        return cellBuilder.cellStyle(style)
+    }
+
+    private fun isUser(player: Player?): Boolean {
+        return player != null && player.name == username
+    }
+
+    private fun getWinnerOrLoserTextColor(player: Player?, isUser: Boolean, winner: Player?): IndexedColors {
+        return if (!isUser) {
+            IndexedColors.BLACK
+        }
+        else if (player == winner) {
+            IndexedColors.GREEN
+        }
+        else {
+            IndexedColors.RED
+        }
+    }
+
+    private fun getBgColor(shadowed: Boolean): IndexedColors {
+        return if (shadowed) IndexedColors.LIGHT_GREEN else IndexedColors.WHITE
+    }
+
+    private fun getPattern(shadowed: Boolean): FillPatternType {
+        return if (shadowed) FillPatternType.SPARSE_DOTS else FillPatternType.SOLID_FOREGROUND
     }
 
 }
+

@@ -3,7 +3,6 @@ package de.kayteem.apps.tfmgamelogconverter.controller.export.sheets
 import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellBuilder
 import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.PlaysSheetFactory.Companion.PlaysColumns.*
 import de.kayteem.apps.tfmgamelogconverter.controller.export.style.PlaysStyleManager
-import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Play
 import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.util.CellRangeAddress
@@ -84,32 +83,31 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
 
     private fun populateTopHeaderRow() {
         val headerRow = _sheet.createRow(ROW_IDX_TOP_HEADER)
-        val defaultCellStyle = _styleManager.getStyle(StyleManager.PRIMARY_HEADER_STYLE)
-        val cellBuilder = CellBuilder(headerRow, defaultCellStyle)
+        val cellBuilder = CellBuilder(headerRow)
 
         PlaysColumns.values().forEach { column ->
-            cellBuilder
+            _styleManager
+                .applyPrimaryHeaderStyle(cellBuilder)
                 .columnIdx(column.idx())
-                .build(topHeaderColumnNames.getOrDefault(column, ""))
+                .build(topHeaderColumnNames[column])
         }
     }
 
     private fun populateBottomHeaderRow() {
         val headerRow = _sheet.createRow(ROW_IDX_BOTTOM_HEADER)
-        val defaultCellStyle = _styleManager.getStyle(StyleManager.SECONDARY_HEADER_STYLE)
-        val cellBuilder = CellBuilder(headerRow, defaultCellStyle)
+        val cellBuilder = CellBuilder(headerRow)
 
         PlaysColumns.values().forEach { column ->
-            cellBuilder
+            _styleManager
+                .applySecondaryHeaderStyle(cellBuilder)
                 .columnIdx(column.idx())
-                .build(bottomHeaderColumnNames.getOrDefault(column, ""))
+                .build(bottomHeaderColumnNames[column])
         }
     }
 
     private fun populateDataRow(rowIdx: Int, play: Play) {
         val row = _sheet.createRow(rowIdx)
-        val defaultCellStyle = _styleManager.getStyle(StyleManager.STRING_DATA_STYLE)
-        val cellBuilder = CellBuilder(row, defaultCellStyle)
+        val cellBuilder = CellBuilder(row)
 
         val timestamp = LocalDateTime.parse(play.timestamp, DateTimeFormatter.ISO_DATE_TIME)
         val players = play.players
@@ -122,8 +120,9 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
 
         PlaysColumns.values().forEach { column ->
             with(cellBuilder) {
-                columnIdx(column.idx())
-                _styleManager.applyStyle(column, players, winner, cellBuilder)
+                _styleManager
+                    .applyStyle(column, players, winner, cellBuilder)
+                    .columnIdx(column.idx())
 
                 when (column) {
                     TIMESTAMP       -> build(timestamp)

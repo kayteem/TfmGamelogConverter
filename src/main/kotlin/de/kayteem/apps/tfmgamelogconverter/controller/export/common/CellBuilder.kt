@@ -10,11 +10,11 @@ import java.time.LocalDateTime
  *
  * Author: Tobias Mielke
  */
-class CellBuilder(private val row: Row, defaultCellStyle: XSSFCellStyle) {
+class CellBuilder(private val row: Row) {
 
     // dependencies
     private var columnIdx: Int = 0
-    private var cellStyle: XSSFCellStyle = defaultCellStyle
+    private var cellStyle: XSSFCellStyle? = null
     
 
     // interface
@@ -54,9 +54,13 @@ class CellBuilder(private val row: Row, defaultCellStyle: XSSFCellStyle) {
         if (value == null) {
             return build("")
         }
-
+        
         val cell = row.createCell(columnIdx)
-        cell.cellStyle = cellStyle
+
+        if (cellStyle != null) {
+            cell.cellStyle = cellStyle
+        }
+        
         cell.setCellValue(value)
 
         return cell

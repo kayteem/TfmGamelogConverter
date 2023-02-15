@@ -18,12 +18,15 @@ class CellStyleBuilder(private val workbook: XSSFWorkbook) {
 
 
     // dependencies
-    private var fontSize: Int = 12
+    private var fontSize: Int = 10
     private var bold: Boolean = false
     private var format: Short = stringFormat
     private var horAlignment: HorizontalAlignment = HorizontalAlignment.CENTER
     private var vertAlignment: VerticalAlignment = VerticalAlignment.CENTER
-    private var backgroundColor: IndexedColors = IndexedColors.WHITE
+    private var textColor: IndexedColors = IndexedColors.BLACK
+    private var cellForegroundColor: IndexedColors = IndexedColors.WHITE
+    private var cellBackgroundColor: IndexedColors = IndexedColors.WHITE
+    private var cellPattern: FillPatternType = FillPatternType.SOLID_FOREGROUND
     private var borderStyle: BorderStyle = BorderStyle.THIN
 
 
@@ -70,8 +73,26 @@ class CellStyleBuilder(private val workbook: XSSFWorkbook) {
         return this
     }
 
-    fun backgroundColor(backgroundColor: IndexedColors): CellStyleBuilder {
-        this.backgroundColor = backgroundColor
+    fun textColor(textColor: IndexedColors): CellStyleBuilder {
+        this.textColor = textColor
+
+        return this
+    }
+
+    fun cellForegroundColor(cellForegroundColor: IndexedColors): CellStyleBuilder {
+        this.cellForegroundColor = cellForegroundColor
+
+        return this
+    }
+
+    fun cellBackgroundColor(cellBackgroundColor: IndexedColors): CellStyleBuilder {
+        this.cellBackgroundColor = cellBackgroundColor
+
+        return this
+    }
+
+    fun cellPattern(cellPattern: FillPatternType): CellStyleBuilder {
+        this.cellPattern = cellPattern
 
         return this
     }
@@ -82,6 +103,7 @@ class CellStyleBuilder(private val workbook: XSSFWorkbook) {
         val font = workbook.createFont()
         font.fontHeightInPoints = fontSize.toShort()
         font.bold = bold
+        font.color = textColor.index
 
         // cell style
         val cellStyle = workbook.createCellStyle()
@@ -90,8 +112,9 @@ class CellStyleBuilder(private val workbook: XSSFWorkbook) {
             dataFormat = format
             alignment = horAlignment
             verticalAlignment = vertAlignment
-            fillForegroundColor = backgroundColor.index     // called fillForegroundColor, but sets cell background color
-            fillPattern = FillPatternType.SOLID_FOREGROUND
+            fillForegroundColor = cellForegroundColor.index
+            fillBackgroundColor = cellBackgroundColor.index
+            fillPattern = cellPattern
             borderTop = borderStyle
             borderLeft = borderStyle
             borderRight = borderStyle
