@@ -39,14 +39,22 @@ class CellBuilder(private val row: Row, defaultCellStyle: XSSFCellStyle) {
     }
 
     fun build(value: Number?): Cell {
+        if (value == null) {
+            return build("")
+        }
+
         val cell = row.createCell(columnIdx)
         cell.cellStyle = cellStyle
-        cell.setCellValue(value?.toDouble() ?: 0.0)
+        cell.setCellValue(value.toDouble())
 
         return cell
     }
 
-    fun build(value: LocalDateTime): Cell {
+    fun build(value: LocalDateTime?): Cell {
+        if (value == null) {
+            return build("")
+        }
+
         val cell = row.createCell(columnIdx)
         cell.cellStyle = cellStyle
         cell.setCellValue(value)

@@ -1,15 +1,13 @@
-package de.kayteem.apps.tfmgamelogconverter.controller.export.sheetBuilders
+package de.kayteem.apps.tfmgamelogconverter.controller.export.sheets
 
 import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellBuilder
-import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellStyleBuilder
-import de.kayteem.apps.tfmgamelogconverter.controller.export.sheetBuilders.PlaysSheetFactory.Companion.Columns.*
+import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.PlaysSheetFactory.Companion.PlaysColumns.*
+import de.kayteem.apps.tfmgamelogconverter.controller.export.style.PlaysStyleManager
+import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Play
-import de.kayteem.apps.tfmgamelogconverter.model.internal.Player
 import org.apache.poi.ss.usermodel.BorderStyle
-import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.ss.util.RegionUtil
-import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.time.LocalDateTime
@@ -20,30 +18,18 @@ import java.time.format.DateTimeFormatter
  *
  * Author: Tobias Mielke
  */
-class PlaysSheetFactory(private val workbook: XSSFWorkbook) {
-
-    // dependencies
-    private lateinit var _username: String
-
+class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username: String) {
 
     // members
     private lateinit var _sheet: XSSFSheet
-    private lateinit var _cellStyleBuilder: CellStyleBuilder
+    private lateinit var _styleManager: PlaysStyleManager
 
-    private lateinit var _topHeaderCellStyle: XSSFCellStyle
-    private lateinit var _bottomHeaderCellStyle: XSSFCellStyle
-    private lateinit var _stringDataCellStyle: XSSFCellStyle
-    private lateinit var _boldStringDataCellStyle: XSSFCellStyle
-    private lateinit var _intDataCellStyle: XSSFCellStyle
-    private lateinit var _timestampCellStyle: XSSFCellStyle
-
-
+    
     // interface
-    fun create(plays: List<Play>, username: String): XSSFSheet {
-        _username = username
+    fun create(plays: List<Play>): XSSFSheet {
         _sheet = workbook.createSheet("Plays")
+        _styleManager = PlaysStyleManager(workbook, username)
 
-        buildCellStyles()
         setColumnsWidths()
         populateSheet(plays)
         mergeAndBorderHeaderCells()
@@ -53,54 +39,8 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook) {
 
 
     // helpers
-    private fun buildCellStyles() {
-        _cellStyleBuilder = CellStyleBuilder(workbook)
-
-        _topHeaderCellStyle = _cellStyleBuilder
-            .fontSize(12)
-            .bold(true)
-            .stringFormat()
-            .backgroundColor(IndexedColors.LIGHT_GREEN)
-            .build()
-
-        _bottomHeaderCellStyle = _cellStyleBuilder
-            .fontSize(10)
-            .bold(false)
-            .stringFormat()
-            .backgroundColor(IndexedColors.LIGHT_GREEN)
-            .build()
-
-        _stringDataCellStyle = _cellStyleBuilder
-            .fontSize(10)
-            .bold(false)
-            .stringFormat()
-            .backgroundColor(IndexedColors.WHITE)
-            .build()
-
-        _boldStringDataCellStyle = _cellStyleBuilder
-            .fontSize(10)
-            .bold(true)
-            .stringFormat()
-            .backgroundColor(IndexedColors.WHITE)
-            .build()
-
-        _intDataCellStyle = _cellStyleBuilder
-            .fontSize(10)
-            .bold(false)
-            .intFormat()
-            .backgroundColor(IndexedColors.WHITE)
-            .build()
-
-        _timestampCellStyle = _cellStyleBuilder
-            .fontSize(10)
-            .bold(false)
-            .dateFormat()
-            .backgroundColor(IndexedColors.LIGHT_GREEN)
-            .build()
-    }
-
     private fun setColumnsWidths() {
-        Columns.values().forEach { column ->
+        PlaysColumns.values().forEach { column ->
             _sheet.setColumnWidth(column.idx(), columnWidths[column]!!)
         }
     }
@@ -144,10 +84,10 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook) {
 
     private fun populateTopHeaderRow() {
         val headerRow = _sheet.createRow(ROW_IDX_TOP_HEADER)
+        val defaultCellStyle = _styleManager.getStyle(StyleManager.PRIMARY_HEADER_STYLE)
+        val cellBuilder = CellBuilder(headerRow, defaultCellStyle)
 
-        val cellBuilder = CellBuilder(headerRow, _topHeaderCellStyle)
-
-        Columns.values().forEach { column ->
+        PlaysColumns.values().forEach { column ->
             cellBuilder
                 .columnIdx(column.idx())
                 .build(topHeaderColumnNames.getOrDefault(column, ""))
@@ -156,10 +96,10 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook) {
 
     private fun populateBottomHeaderRow() {
         val headerRow = _sheet.createRow(ROW_IDX_BOTTOM_HEADER)
+        val defaultCellStyle = _styleManager.getStyle(StyleManager.SECONDARY_HEADER_STYLE)
+        val cellBuilder = CellBuilder(headerRow, defaultCellStyle)
 
-        val cellBuilder = CellBuilder(headerRow, _bottomHeaderCellStyle)
-
-        Columns.values().forEach { column ->
+        PlaysColumns.values().forEach { column ->
             cellBuilder
                 .columnIdx(column.idx())
                 .build(bottomHeaderColumnNames.getOrDefault(column, ""))
@@ -168,6 +108,8 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook) {
 
     private fun populateDataRow(rowIdx: Int, play: Play) {
         val row = _sheet.createRow(rowIdx)
+        val defaultCellStyle = _styleManager.getStyle(StyleManager.CENTERED_STRING_DATA_STYLE)
+        val cellBuilder = CellBuilder(row, defaultCellStyle)
 
         val timestamp = LocalDateTime.parse(play.timestamp, DateTimeFormatter.ISO_DATE_TIME)
         val player1 = play.players.getOrNull(0)
@@ -176,61 +118,43 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook) {
         val player4 = play.players.getOrNull(3)
         val player5 = play.players.getOrNull(4)
 
-        val cellBuilder = CellBuilder(row, _stringDataCellStyle)
+        PlaysColumns.values().forEach { column ->
+            with(cellBuilder) {
+                columnIdx(column.idx())
+                _styleManager.applyStyle(column, play, cellBuilder)
 
-        Columns.values().forEach { column ->
+                when (column) {
+                    TIMESTAMP       -> build(timestamp)
+                    BOARD           -> build(play.board)
+                    GENERATIONS     -> build(play.generations)
 
-            cellBuilder.columnIdx(column.idx())
+                    PLAYER_1_NAME   -> build(player1?.name)
+                    PLAYER_1_CORP   -> build(player1?.corporation)
+                    PLAYER_1_SCORE  -> build(player1?.finalScore)
+                    PLAYER_1_ELO    -> build(player1?.elo)
 
-            when (column) {
-                TIMESTAMP       -> cellBuilder.cellStyle(_timestampCellStyle).build(timestamp)
-                BOARD           -> cellBuilder.cellStyle(_bottomHeaderCellStyle).build(play.board)
-                GENERATIONS     -> cellBuilder.cellStyle(_bottomHeaderCellStyle).build(play.generations)
+                    PLAYER_2_NAME   -> build(player2?.name)
+                    PLAYER_2_CORP   -> build(player2?.corporation)
+                    PLAYER_2_SCORE  -> build(player2?.finalScore)
+                    PLAYER_2_ELO    -> build(player2?.elo)
 
-                PLAYER_1_NAME   -> populatePlayerNameCell(player1, cellBuilder)
-                PLAYER_1_CORP   -> populateStringCell(player1?.corporation, cellBuilder)
-                PLAYER_1_SCORE  -> populateIntCell(player1?.finalScore, cellBuilder)
-                PLAYER_1_ELO    -> populateIntCell(player1?.elo, cellBuilder)
+                    PLAYER_3_NAME   -> build(player3?.name)
+                    PLAYER_3_CORP   -> build(player3?.corporation)
+                    PLAYER_3_SCORE  -> build(player3?.finalScore)
+                    PLAYER_3_ELO    -> build(player3?.elo)
 
-                PLAYER_2_NAME   -> populatePlayerNameCell(player2, cellBuilder)
-                PLAYER_2_CORP   -> populateStringCell(player2?.corporation, cellBuilder)
-                PLAYER_2_SCORE  -> populateIntCell(player2?.finalScore, cellBuilder)
-                PLAYER_2_ELO    -> populateIntCell(player2?.elo, cellBuilder)
+                    PLAYER_4_NAME   -> build(player4?.name)
+                    PLAYER_4_CORP   -> build(player4?.corporation)
+                    PLAYER_4_SCORE  -> build(player4?.finalScore)
+                    PLAYER_4_ELO    -> build(player4?.elo)
 
-                PLAYER_3_NAME   -> populatePlayerNameCell(player3, cellBuilder)
-                PLAYER_3_CORP   -> populateStringCell(player3?.corporation, cellBuilder)
-                PLAYER_3_SCORE  -> populateIntCell(player3?.finalScore, cellBuilder)
-                PLAYER_3_ELO    -> populateIntCell(player3?.elo, cellBuilder)
-
-                PLAYER_4_NAME   -> populatePlayerNameCell(player4, cellBuilder)
-                PLAYER_4_CORP   -> populateStringCell(player4?.corporation, cellBuilder)
-                PLAYER_4_SCORE  -> populateIntCell(player4?.finalScore, cellBuilder)
-                PLAYER_4_ELO    -> populateIntCell(player4?.elo, cellBuilder)
-
-                PLAYER_5_NAME   -> populatePlayerNameCell(player5, cellBuilder)
-                PLAYER_5_CORP   -> populateStringCell(player5?.corporation, cellBuilder)
-                PLAYER_5_SCORE  -> populateIntCell(player5?.finalScore, cellBuilder)
-                PLAYER_5_ELO    -> populateIntCell(player5?.elo, cellBuilder)
+                    PLAYER_5_NAME   -> build(player5?.name)
+                    PLAYER_5_CORP   -> build(player5?.corporation)
+                    PLAYER_5_SCORE  -> build(player5?.finalScore)
+                    PLAYER_5_ELO    -> build(player5?.elo)
+                }
             }
         }
-    }
-
-    private fun populatePlayerNameCell(player: Player?, cellBuilder: CellBuilder) {
-        val cellStyle =
-            if (player != null && player.name == _username) _boldStringDataCellStyle
-            else _stringDataCellStyle
-
-        val value = player?.name ?: ""
-        
-        cellBuilder.cellStyle(cellStyle).build(value)
-    }
-
-    private fun populateStringCell(value: String?, cellBuilder: CellBuilder) {
-        cellBuilder.cellStyle(_stringDataCellStyle).build(value ?: "")
-    }
-
-    private fun populateIntCell(value: Int?, cellBuilder: CellBuilder) {
-        cellBuilder.cellStyle(_intDataCellStyle).build(value ?: 0)
     }
 
 
@@ -238,7 +162,7 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook) {
     companion object {
 
         // columns
-        enum class Columns {
+        enum class PlaysColumns {
             TIMESTAMP,
             BOARD,
             GENERATIONS,
