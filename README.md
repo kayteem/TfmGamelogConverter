@@ -3,6 +3,9 @@
 ## Scope
 - This application allows for converting the Terraforming Mars GameLog JSON files  
 (created by the TFM MOD: "Overlay.dll") into an Excel file (xlsx format).
+                 
+## Screenshot
+![Screenshot deprecated](https://github.com/kayteem/TfmGamelogConverter/blob/main/doc/Screenshot.PNG?raw=true)
 
 ## Requirements
 - This is a KOTLIN/JAVA application.
