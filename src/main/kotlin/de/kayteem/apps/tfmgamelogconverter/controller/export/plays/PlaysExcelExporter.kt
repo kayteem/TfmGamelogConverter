@@ -3,6 +3,7 @@ package de.kayteem.apps.tfmgamelogconverter.controller.export.plays
 import de.kayteem.apps.tfmgamelogconverter.controller.converters.PlaysToUsernameConverter
 import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellBuilder
 import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellStyleBuilder
+import de.kayteem.apps.tfmgamelogconverter.controller.export.plays.PlaysExcelExporter.Companion.Columns.*
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Play
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Player
 import org.apache.poi.ss.usermodel.BorderStyle
@@ -37,8 +38,8 @@ class PlaysExcelExporter : PlaysExporter {
 
     private lateinit var _topHeaderCellStyle: XSSFCellStyle
     private lateinit var _bottomHeaderCellStyle: XSSFCellStyle
-    private lateinit var _stringDataCenterCellStyle: XSSFCellStyle
-    private lateinit var _boldStringDataCenterCellStyle: XSSFCellStyle
+    private lateinit var _stringDataCellStyle: XSSFCellStyle
+    private lateinit var _boldStringDataCellStyle: XSSFCellStyle
     private lateinit var _intDataCellStyle: XSSFCellStyle
     private lateinit var _timestampCellStyle: XSSFCellStyle
 
@@ -80,14 +81,14 @@ class PlaysExcelExporter : PlaysExporter {
             .backgroundColor(IndexedColors.LIGHT_GREEN)
             .build()
 
-        _stringDataCenterCellStyle = _cellStyleBuilder
+        _stringDataCellStyle = _cellStyleBuilder
             .fontSize(10)
             .bold(false)
             .stringFormat()
             .backgroundColor(IndexedColors.WHITE)
             .build()
 
-        _boldStringDataCenterCellStyle = _cellStyleBuilder
+        _boldStringDataCellStyle = _cellStyleBuilder
             .fontSize(10)
             .bold(true)
             .stringFormat()
@@ -110,30 +111,8 @@ class PlaysExcelExporter : PlaysExporter {
     }
 
     private fun setColumnsWidths() {
-        with(_sheet) {
-            setColumnWidth(COL_IDX_TIMESTAMP, COL_WIDTH_TIMESTAMP)
-            setColumnWidth(COL_IDX_BOARD, COL_WIDTH_BOARD)
-            setColumnWidth(COL_IDX_GENERATIONS, COL_WIDTH_GENERATIONS)
-            setColumnWidth(COL_IDX_PLAYER_1_NAME, COL_WIDTH_PLAYER_NAME)
-            setColumnWidth(COL_IDX_PLAYER_1_CORP, COL_WIDTH_PLAYER_CORP)
-            setColumnWidth(COL_IDX_PLAYER_1_SCORE, COL_WIDTH_PLAYER_SCORE)
-            setColumnWidth(COL_IDX_PLAYER_1_ELO, COL_WIDTH_PLAYER_ELO)
-            setColumnWidth(COL_IDX_PLAYER_2_NAME, COL_WIDTH_PLAYER_NAME)
-            setColumnWidth(COL_IDX_PLAYER_2_CORP, COL_WIDTH_PLAYER_CORP)
-            setColumnWidth(COL_IDX_PLAYER_2_SCORE, COL_WIDTH_PLAYER_SCORE)
-            setColumnWidth(COL_IDX_PLAYER_2_ELO, COL_WIDTH_PLAYER_ELO)
-            setColumnWidth(COL_IDX_PLAYER_3_NAME, COL_WIDTH_PLAYER_NAME)
-            setColumnWidth(COL_IDX_PLAYER_3_CORP, COL_WIDTH_PLAYER_CORP)
-            setColumnWidth(COL_IDX_PLAYER_3_SCORE, COL_WIDTH_PLAYER_SCORE)
-            setColumnWidth(COL_IDX_PLAYER_3_ELO, COL_WIDTH_PLAYER_ELO)
-            setColumnWidth(COL_IDX_PLAYER_4_NAME, COL_WIDTH_PLAYER_NAME)
-            setColumnWidth(COL_IDX_PLAYER_4_CORP, COL_WIDTH_PLAYER_CORP)
-            setColumnWidth(COL_IDX_PLAYER_4_SCORE, COL_WIDTH_PLAYER_SCORE)
-            setColumnWidth(COL_IDX_PLAYER_4_ELO, COL_WIDTH_PLAYER_ELO)
-            setColumnWidth(COL_IDX_PLAYER_5_NAME, COL_WIDTH_PLAYER_NAME)
-            setColumnWidth(COL_IDX_PLAYER_5_CORP, COL_WIDTH_PLAYER_CORP)
-            setColumnWidth(COL_IDX_PLAYER_5_SCORE, COL_WIDTH_PLAYER_SCORE)
-            setColumnWidth(COL_IDX_PLAYER_5_ELO, COL_WIDTH_PLAYER_ELO)
+        Columns.values().forEach { column ->
+            _sheet.setColumnWidth(column.idx(), columnWidths[column]!!)
         }
     }
 
@@ -179,15 +158,10 @@ class PlaysExcelExporter : PlaysExporter {
 
         val cellBuilder = CellBuilder(headerRow, _topHeaderCellStyle)
 
-        with(cellBuilder) {
-            columnIdx(COL_IDX_TIMESTAMP).build(HEADER_STR_TIMESTAMP)
-            columnIdx(COL_IDX_BOARD).build(HEADER_STR_BOARD)
-            columnIdx(COL_IDX_GENERATIONS).build(HEADER_STR_GENERATIONS)
-            columnIdx(COL_IDX_PLAYER_1_NAME).build(HEADER_STR_PLAYER_1_NAME)
-            columnIdx(COL_IDX_PLAYER_2_NAME).build(HEADER_STR_PLAYER_2_NAME)
-            columnIdx(COL_IDX_PLAYER_3_NAME).build(HEADER_STR_PLAYER_3_NAME)
-            columnIdx(COL_IDX_PLAYER_4_NAME).build(HEADER_STR_PLAYER_4_NAME)
-            columnIdx(COL_IDX_PLAYER_5_NAME).build(HEADER_STR_PLAYER_5_NAME)
+        Columns.values().forEach { column ->
+            cellBuilder
+                .columnIdx(column.idx())
+                .build(topHeaderColumnNames.getOrDefault(column, ""))
         }
     }
 
@@ -196,161 +170,215 @@ class PlaysExcelExporter : PlaysExporter {
 
         val cellBuilder = CellBuilder(headerRow, _bottomHeaderCellStyle)
 
-        with(cellBuilder) {
-            columnIdx(COL_IDX_PLAYER_1_NAME).build(HEADER_STR_NAME)
-            columnIdx(COL_IDX_PLAYER_1_CORP).build(HEADER_STR_CORP)
-            columnIdx(COL_IDX_PLAYER_1_SCORE).build(HEADER_STR_SCORE)
-            columnIdx(COL_IDX_PLAYER_1_ELO).build(HEADER_STR_ELO)
-
-            columnIdx(COL_IDX_PLAYER_2_NAME).build(HEADER_STR_NAME)
-            columnIdx(COL_IDX_PLAYER_2_CORP).build(HEADER_STR_CORP)
-            columnIdx(COL_IDX_PLAYER_2_SCORE).build(HEADER_STR_SCORE)
-            columnIdx(COL_IDX_PLAYER_2_ELO).build(HEADER_STR_ELO)
-
-            columnIdx(COL_IDX_PLAYER_3_NAME).build(HEADER_STR_NAME)
-            columnIdx(COL_IDX_PLAYER_3_CORP).build(HEADER_STR_CORP)
-            columnIdx(COL_IDX_PLAYER_3_SCORE).build(HEADER_STR_SCORE)
-            columnIdx(COL_IDX_PLAYER_3_ELO).build(HEADER_STR_ELO)
-
-            columnIdx(COL_IDX_PLAYER_4_NAME).build(HEADER_STR_NAME)
-            columnIdx(COL_IDX_PLAYER_4_CORP).build(HEADER_STR_CORP)
-            columnIdx(COL_IDX_PLAYER_4_SCORE).build(HEADER_STR_SCORE)
-            columnIdx(COL_IDX_PLAYER_4_ELO).build(HEADER_STR_ELO)
-
-            columnIdx(COL_IDX_PLAYER_5_NAME).build(HEADER_STR_NAME)
-            columnIdx(COL_IDX_PLAYER_5_CORP).build(HEADER_STR_CORP)
-            columnIdx(COL_IDX_PLAYER_5_SCORE).build(HEADER_STR_SCORE)
-            columnIdx(COL_IDX_PLAYER_5_ELO).build(HEADER_STR_ELO)
+        Columns.values().forEach { column ->
+            cellBuilder
+                .columnIdx(column.idx())
+                .build(bottomHeaderColumnNames.getOrDefault(column, ""))
         }
     }
 
     private fun populateDataRow(rowIdx: Int, play: Play) {
         val row = _sheet.createRow(rowIdx)
 
-        val cellBuilder = CellBuilder(row, _stringDataCenterCellStyle)
+        val timestamp = LocalDateTime.parse(play.timestamp, DateTimeFormatter.ISO_DATE_TIME)
+        val player1 = play.players.getOrNull(0)
+        val player2 = play.players.getOrNull(1)
+        val player3 = play.players.getOrNull(2)
+        val player4 = play.players.getOrNull(3)
+        val player5 = play.players.getOrNull(4)
 
-        with(cellBuilder) {
-            val date = LocalDateTime.parse(play.timestamp, DateTimeFormatter.ISO_DATE_TIME)
-            columnIdx(COL_IDX_TIMESTAMP).cellStyle(_timestampCellStyle).build(date)
-            columnIdx(COL_IDX_BOARD).cellStyle(_bottomHeaderCellStyle).build(play.board)
-            columnIdx(COL_IDX_GENERATIONS).cellStyle(_bottomHeaderCellStyle).build(play.generations)
+        val cellBuilder = CellBuilder(row, _stringDataCellStyle)
 
-            populatePlayerData(
-                COL_IDX_PLAYER_1_NAME, COL_IDX_PLAYER_1_CORP, COL_IDX_PLAYER_1_SCORE, COL_IDX_PLAYER_1_ELO,
-                play.players.getOrNull(0), cellBuilder
-            )
+        Columns.values().forEach { column ->
 
-            populatePlayerData(
-                COL_IDX_PLAYER_2_NAME, COL_IDX_PLAYER_2_CORP, COL_IDX_PLAYER_2_SCORE, COL_IDX_PLAYER_2_ELO,
-                play.players.getOrNull(1), cellBuilder
-            )
+            cellBuilder.columnIdx(column.idx())
 
-            populatePlayerData(
-                COL_IDX_PLAYER_3_NAME, COL_IDX_PLAYER_3_CORP, COL_IDX_PLAYER_3_SCORE, COL_IDX_PLAYER_3_ELO,
-                play.players.getOrNull(2), cellBuilder
-            )
+            when (column) {
+                TIMESTAMP       -> cellBuilder.cellStyle(_timestampCellStyle).build(timestamp)
+                BOARD           -> cellBuilder.cellStyle(_bottomHeaderCellStyle).build(play.board)
+                GENERATIONS     -> cellBuilder.cellStyle(_bottomHeaderCellStyle).build(play.generations)
 
-            populatePlayerData(
-                COL_IDX_PLAYER_4_NAME, COL_IDX_PLAYER_4_CORP, COL_IDX_PLAYER_4_SCORE, COL_IDX_PLAYER_4_ELO,
-                play.players.getOrNull(3), cellBuilder
-            )
+                PLAYER_1_NAME   -> populatePlayerNameCell(player1, cellBuilder)
+                PLAYER_1_CORP   -> populateStringCell(player1?.corporation, cellBuilder)
+                PLAYER_1_SCORE  -> populateIntCell(player1?.finalScore, cellBuilder)
+                PLAYER_1_ELO    -> populateIntCell(player1?.elo, cellBuilder)
 
-            populatePlayerData(
-                COL_IDX_PLAYER_5_NAME, COL_IDX_PLAYER_5_CORP, COL_IDX_PLAYER_5_SCORE, COL_IDX_PLAYER_5_ELO,
-                play.players.getOrNull(4), cellBuilder
-            )
+                PLAYER_2_NAME   -> populatePlayerNameCell(player2, cellBuilder)
+                PLAYER_2_CORP   -> populateStringCell(player2?.corporation, cellBuilder)
+                PLAYER_2_SCORE  -> populateIntCell(player2?.finalScore, cellBuilder)
+                PLAYER_2_ELO    -> populateIntCell(player2?.elo, cellBuilder)
+
+                PLAYER_3_NAME   -> populatePlayerNameCell(player3, cellBuilder)
+                PLAYER_3_CORP   -> populateStringCell(player3?.corporation, cellBuilder)
+                PLAYER_3_SCORE  -> populateIntCell(player3?.finalScore, cellBuilder)
+                PLAYER_3_ELO    -> populateIntCell(player3?.elo, cellBuilder)
+
+                PLAYER_4_NAME   -> populatePlayerNameCell(player4, cellBuilder)
+                PLAYER_4_CORP   -> populateStringCell(player4?.corporation, cellBuilder)
+                PLAYER_4_SCORE  -> populateIntCell(player4?.finalScore, cellBuilder)
+                PLAYER_4_ELO    -> populateIntCell(player4?.elo, cellBuilder)
+
+                PLAYER_5_NAME   -> populatePlayerNameCell(player5, cellBuilder)
+                PLAYER_5_CORP   -> populateStringCell(player5?.corporation, cellBuilder)
+                PLAYER_5_SCORE  -> populateIntCell(player5?.finalScore, cellBuilder)
+                PLAYER_5_ELO    -> populateIntCell(player5?.elo, cellBuilder)
+            }
         }
     }
 
-    private fun populatePlayerData(nameColIdx: Int, corpColIdx: Int, scoreColIdx: Int, eloColIdx: Int, player: Player?, cellBuilder: CellBuilder) {
-        with(cellBuilder) {
-            if (player == null) {
-                columnIdx(nameColIdx).cellStyle(_stringDataCenterCellStyle).build("")
-                columnIdx(corpColIdx).cellStyle(_stringDataCenterCellStyle).build("")
-                columnIdx(scoreColIdx).cellStyle(_stringDataCenterCellStyle).build("")
-                columnIdx(eloColIdx).cellStyle(_stringDataCenterCellStyle).build("")
-            }
+    private fun populatePlayerNameCell(player: Player?, cellBuilder: CellBuilder) {
+        val cellStyle =
+            if (player != null && player.name == _username) _boldStringDataCellStyle
+            else _stringDataCellStyle
 
-            else {
-                val nameCellStyle =
-                    if (player.name == _username) _boldStringDataCenterCellStyle
-                    else _stringDataCenterCellStyle
+        val value = player?.name ?: ""
+        
+        cellBuilder.cellStyle(cellStyle).build(value)
+    }
 
-                columnIdx(nameColIdx).cellStyle(nameCellStyle).build(player.name)
-                columnIdx(corpColIdx).cellStyle(_stringDataCenterCellStyle).build(player.corporation)
-                columnIdx(scoreColIdx).cellStyle(_intDataCellStyle).build(player.finalScore)
-                columnIdx(eloColIdx).cellStyle(_intDataCellStyle).build(player.elo)
-            }
-        }
+    private fun populateStringCell(value: String?, cellBuilder: CellBuilder) {
+        cellBuilder.cellStyle(_stringDataCellStyle).build(value ?: "")
+    }
+
+    private fun populateIntCell(value: Int?, cellBuilder: CellBuilder) {
+        cellBuilder.cellStyle(_intDataCellStyle).build(value ?: 0)
     }
 
 
     // companion
     companion object {
 
-        // header strings
-        const val HEADER_STR_TIMESTAMP = "Timestamp"
-        const val HEADER_STR_BOARD = "Board"
-        const val HEADER_STR_GENERATIONS = "Gens"
-        const val HEADER_STR_PLAYER_1_NAME = "Player 1"
-        const val HEADER_STR_PLAYER_2_NAME = "Player 2"
-        const val HEADER_STR_PLAYER_3_NAME = "Player 3"
-        const val HEADER_STR_PLAYER_4_NAME = "Player 4"
-        const val HEADER_STR_PLAYER_5_NAME = "Player 5"
-        const val HEADER_STR_NAME = "Name"
-        const val HEADER_STR_CORP = "Corporation"
-        const val HEADER_STR_SCORE = "Score"
-        const val HEADER_STR_ELO = "ELO"
+        // columns
+        enum class Columns {
+            TIMESTAMP,
+            BOARD,
+            GENERATIONS,
+            PLAYER_1_NAME,
+            PLAYER_1_CORP,
+            PLAYER_1_SCORE,
+            PLAYER_1_ELO,
+            PLAYER_2_NAME,
+            PLAYER_2_CORP,
+            PLAYER_2_SCORE,
+            PLAYER_2_ELO,
+            PLAYER_3_NAME,
+            PLAYER_3_CORP,
+            PLAYER_3_SCORE,
+            PLAYER_3_ELO,
+            PLAYER_4_NAME,
+            PLAYER_4_CORP,
+            PLAYER_4_SCORE,
+            PLAYER_4_ELO,
+            PLAYER_5_NAME,
+            PLAYER_5_CORP,
+            PLAYER_5_SCORE,
+            PLAYER_5_ELO;
+
+            fun idx(): Int {
+                return ordinal
+            }
+        }
+
+        // header column names
+        private const val HEADER_STR_TIMESTAMP = "Timestamp"
+        private const val HEADER_STR_BOARD = "Board"
+        private const val HEADER_STR_GENERATIONS = "Gens"
+        private const val HEADER_STR_PLAYER_1 = "Player 1"
+        private const val HEADER_STR_PLAYER_2 = "Player 2"
+        private const val HEADER_STR_PLAYER_3 = "Player 3"
+        private const val HEADER_STR_PLAYER_4 = "Player 4"
+        private const val HEADER_STR_PLAYER_5 = "Player 5"
+        private const val HEADER_STR_NAME = "Name"
+        private const val HEADER_STR_CORP = "Corporation"
+        private const val HEADER_STR_SCORE = "Score"
+        private const val HEADER_STR_ELO = "ELO"
+        
+        val topHeaderColumnNames = mapOf(
+            TIMESTAMP to HEADER_STR_TIMESTAMP,
+            BOARD to HEADER_STR_BOARD,
+            GENERATIONS to HEADER_STR_GENERATIONS,
+            PLAYER_1_NAME to HEADER_STR_PLAYER_1,
+            PLAYER_2_NAME to HEADER_STR_PLAYER_2,
+            PLAYER_3_NAME to HEADER_STR_PLAYER_3,
+            PLAYER_4_NAME to HEADER_STR_PLAYER_4,
+            PLAYER_5_NAME to HEADER_STR_PLAYER_5,
+        )
+
+        val bottomHeaderColumnNames = mapOf(
+            PLAYER_1_NAME to HEADER_STR_NAME,
+            PLAYER_1_CORP to HEADER_STR_CORP,
+            PLAYER_1_SCORE to HEADER_STR_SCORE,
+            PLAYER_1_ELO to HEADER_STR_ELO,
+            PLAYER_2_NAME to HEADER_STR_NAME,
+            PLAYER_2_CORP to HEADER_STR_CORP,
+            PLAYER_2_SCORE to HEADER_STR_SCORE,
+            PLAYER_2_ELO to HEADER_STR_ELO,
+            PLAYER_3_NAME to HEADER_STR_NAME,
+            PLAYER_3_CORP to HEADER_STR_CORP,
+            PLAYER_3_SCORE to HEADER_STR_SCORE,
+            PLAYER_3_ELO to HEADER_STR_ELO,
+            PLAYER_4_NAME to HEADER_STR_NAME,
+            PLAYER_4_CORP to HEADER_STR_CORP,
+            PLAYER_4_SCORE to HEADER_STR_SCORE,
+            PLAYER_4_ELO to HEADER_STR_ELO,
+            PLAYER_5_NAME to HEADER_STR_NAME,
+            PLAYER_5_CORP to HEADER_STR_CORP,
+            PLAYER_5_SCORE to HEADER_STR_SCORE,
+            PLAYER_5_ELO to HEADER_STR_ELO,
+        )
+
+
+        // column widths
+        private const val COL_WIDTH_TIMESTAMP = 5000
+        private const val COL_WIDTH_BOARD = 2500
+        private const val COL_WIDTH_GENERATIONS = 2500
+        private const val COL_WIDTH_PLAYER_NAME = 4000
+        private const val COL_WIDTH_PLAYER_CORP = 5500
+        private const val COL_WIDTH_PLAYER_SCORE = 2500
+        private const val COL_WIDTH_PLAYER_ELO = 2500
+
+        val columnWidths = mapOf(
+            TIMESTAMP to COL_WIDTH_TIMESTAMP,
+            BOARD to COL_WIDTH_BOARD,
+            GENERATIONS to COL_WIDTH_GENERATIONS,
+            PLAYER_1_NAME to COL_WIDTH_PLAYER_NAME,
+            PLAYER_1_CORP to COL_WIDTH_PLAYER_CORP,
+            PLAYER_1_SCORE to COL_WIDTH_PLAYER_SCORE,
+            PLAYER_1_ELO to COL_WIDTH_PLAYER_ELO,
+            PLAYER_2_NAME to COL_WIDTH_PLAYER_NAME,
+            PLAYER_2_CORP to COL_WIDTH_PLAYER_CORP,
+            PLAYER_2_SCORE to COL_WIDTH_PLAYER_SCORE,
+            PLAYER_2_ELO to COL_WIDTH_PLAYER_ELO,
+            PLAYER_3_NAME to COL_WIDTH_PLAYER_NAME,
+            PLAYER_3_CORP to COL_WIDTH_PLAYER_CORP,
+            PLAYER_3_SCORE to COL_WIDTH_PLAYER_SCORE,
+            PLAYER_3_ELO to COL_WIDTH_PLAYER_ELO,
+            PLAYER_4_NAME to COL_WIDTH_PLAYER_NAME,
+            PLAYER_4_CORP to COL_WIDTH_PLAYER_CORP,
+            PLAYER_4_SCORE to COL_WIDTH_PLAYER_SCORE,
+            PLAYER_4_ELO to COL_WIDTH_PLAYER_ELO,
+            PLAYER_5_NAME to COL_WIDTH_PLAYER_NAME,
+            PLAYER_5_CORP to COL_WIDTH_PLAYER_CORP,
+            PLAYER_5_SCORE to COL_WIDTH_PLAYER_SCORE,
+            PLAYER_5_ELO to COL_WIDTH_PLAYER_ELO,
+        )
+
 
         // row indices
         const val ROW_IDX_TOP_HEADER = 0
         const val ROW_IDX_BOTTOM_HEADER = 1
         const val ROW_IDX_FIRST_DATA_ROW = 2
 
-        // column indices
-        const val COL_IDX_TIMESTAMP = 0
-        const val COL_IDX_BOARD = 1
-        const val COL_IDX_GENERATIONS = 2
-        const val COL_IDX_PLAYER_1_NAME = 3
-        const val COL_IDX_PLAYER_1_CORP = 4
-        const val COL_IDX_PLAYER_1_SCORE = 5
-        const val COL_IDX_PLAYER_1_ELO = 6
-        const val COL_IDX_PLAYER_2_NAME = 7
-        const val COL_IDX_PLAYER_2_CORP = 8
-        const val COL_IDX_PLAYER_2_SCORE = 9
-        const val COL_IDX_PLAYER_2_ELO = 10
-        const val COL_IDX_PLAYER_3_NAME = 11
-        const val COL_IDX_PLAYER_3_CORP = 12
-        const val COL_IDX_PLAYER_3_SCORE = 13
-        const val COL_IDX_PLAYER_3_ELO = 14
-        const val COL_IDX_PLAYER_4_NAME = 15
-        const val COL_IDX_PLAYER_4_CORP = 16
-        const val COL_IDX_PLAYER_4_SCORE = 17
-        const val COL_IDX_PLAYER_4_ELO = 18
-        const val COL_IDX_PLAYER_5_NAME = 19
-        const val COL_IDX_PLAYER_5_CORP = 20
-        const val COL_IDX_PLAYER_5_SCORE = 21
-        const val COL_IDX_PLAYER_5_ELO = 22
-
-        // column widths
-        const val COL_WIDTH_TIMESTAMP = 5000
-        const val COL_WIDTH_BOARD = 2500
-        const val COL_WIDTH_GENERATIONS = 2500
-        const val COL_WIDTH_PLAYER_NAME = 4000
-        const val COL_WIDTH_PLAYER_CORP = 5500
-        const val COL_WIDTH_PLAYER_SCORE = 2500
-        const val COL_WIDTH_PLAYER_ELO = 2500
-
         // cell range addresses (for merged regions and auto-filters)
-        val RANGE_TIMESTAMP = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, COL_IDX_TIMESTAMP, COL_IDX_TIMESTAMP)
-        val RANGE_BOARD = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, COL_IDX_BOARD, COL_IDX_BOARD)
-        val RANGE_GENERATIONS = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, COL_IDX_GENERATIONS, COL_IDX_GENERATIONS)
-        val RANGE_PLAYER_1 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, COL_IDX_PLAYER_1_NAME, COL_IDX_PLAYER_1_ELO)
-        val RANGE_PLAYER_2 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, COL_IDX_PLAYER_2_NAME, COL_IDX_PLAYER_2_ELO)
-        val RANGE_PLAYER_3 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, COL_IDX_PLAYER_3_NAME, COL_IDX_PLAYER_3_ELO)
-        val RANGE_PLAYER_4 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, COL_IDX_PLAYER_4_NAME, COL_IDX_PLAYER_4_ELO)
-        val RANGE_PLAYER_5 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, COL_IDX_PLAYER_5_NAME, COL_IDX_PLAYER_5_ELO)
-        val RANGE_FILTERS = CellRangeAddress(ROW_IDX_BOTTOM_HEADER, ROW_IDX_BOTTOM_HEADER, COL_IDX_TIMESTAMP, COL_IDX_PLAYER_5_ELO)
+        val RANGE_TIMESTAMP = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, TIMESTAMP.idx(), TIMESTAMP.idx())
+        val RANGE_BOARD = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, BOARD.idx(), BOARD.idx())
+        val RANGE_GENERATIONS = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, GENERATIONS.idx(), GENERATIONS.idx())
+        val RANGE_PLAYER_1 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_1_NAME.idx(), PLAYER_1_ELO.idx())
+        val RANGE_PLAYER_2 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_2_NAME.idx(), PLAYER_2_ELO.idx())
+        val RANGE_PLAYER_3 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_3_NAME.idx(), PLAYER_3_ELO.idx())
+        val RANGE_PLAYER_4 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_4_NAME.idx(), PLAYER_4_ELO.idx())
+        val RANGE_PLAYER_5 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_5_NAME.idx(), PLAYER_5_ELO.idx())
+        val RANGE_FILTERS = CellRangeAddress(ROW_IDX_BOTTOM_HEADER, ROW_IDX_BOTTOM_HEADER, TIMESTAMP.idx(), PLAYER_5_ELO.idx())
 
         // border style
         val BORDER_STYLE = BorderStyle.THIN
