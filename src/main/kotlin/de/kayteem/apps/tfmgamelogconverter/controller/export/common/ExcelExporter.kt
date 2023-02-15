@@ -16,9 +16,9 @@ import java.nio.file.Path
  *
  * Author: Tobias Mielke
  */
-class ExcelExporter {
+class ExcelExporter(private val path: Path) {
 
-    fun export(path: Path, plays: List<Play>) {
+    fun export(plays: List<Play>) {
 
         // determine username
         val username = PlaysToUsernameConverter().process(plays)

@@ -24,10 +24,10 @@ class AnExcelExporter {
 
         // setup
         val plays = listOf(PLAY_1, PLAY_2)
-        exporter = ExcelExporter()
+        exporter = ExcelExporter(PATH_EXCEL)
 
         // execution
-        exporter.export(PATH_EXCEL, plays)
+        exporter.export(plays)
 
         // post-condition
         Assert.assertTrue(PATH_EXCEL.toFile().exists())
