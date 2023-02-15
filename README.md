@@ -1,4 +1,4 @@
-# Terraforming Mars: GameLog Converter v1.2
+# Terraforming Mars: GameLog Converter v1.3
 
 ## Scope
 - This application allows for converting the Terraforming Mars GameLog JSON files  
@@ -10,7 +10,7 @@
 
 ## QuickStart Guide
 - This application requires no installation.
-- Simply download the [.zip archive](https://github.com/kayteem/TfmGamelogConverter/blob/main/executable/TfmGamelogConverter%20v1.2.zip) and extract the contents (.jar file and .bat file)  
+- Simply download the [.zip archive](https://github.com/kayteem/TfmGamelogConverter/blob/main/executable/TfmGamelogConverter%20v1.3.zip) and extract the contents (.jar file and .bat file)  
   to whereever your GameLog JSON files are located at, which usually should be at  
   Steam\SteamApps\common\Terraforming Mars\Logs\GameLogs.
 - In order to run the application, simply double-click the extracted batch file (.bat)
@@ -20,6 +20,7 @@
   - the application creates an Excel file, containing the summarized data of all imported JSON files
 
 ## Version History
+- V1.3 [2023_02_12]: application now properly formats all cells and highlights the user's player name for every play
 - V1.2 [2023_01_22]: application now exports to Excel, and contains corporation and ELO rating data
 - V1.1 [2023_01_21]: application now also exports the player ELO ratings
 - v1.0 [2023_01_20]: basic functionality for exporting time, board, player names and scores, as well as the number of generations into a CSV
