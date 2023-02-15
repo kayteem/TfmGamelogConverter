@@ -108,20 +108,22 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
 
     private fun populateDataRow(rowIdx: Int, play: Play) {
         val row = _sheet.createRow(rowIdx)
-        val defaultCellStyle = _styleManager.getStyle(StyleManager.CENTERED_STRING_DATA_STYLE)
+        val defaultCellStyle = _styleManager.getStyle(StyleManager.STRING_DATA_STYLE)
         val cellBuilder = CellBuilder(row, defaultCellStyle)
 
         val timestamp = LocalDateTime.parse(play.timestamp, DateTimeFormatter.ISO_DATE_TIME)
-        val player1 = play.players.getOrNull(0)
-        val player2 = play.players.getOrNull(1)
-        val player3 = play.players.getOrNull(2)
-        val player4 = play.players.getOrNull(3)
-        val player5 = play.players.getOrNull(4)
+        val players = play.players
+        val winner = play.winner()
+        val player1 = players.getOrNull(0)
+        val player2 = players.getOrNull(1)
+        val player3 = players.getOrNull(2)
+        val player4 = players.getOrNull(3)
+        val player5 = players.getOrNull(4)
 
         PlaysColumns.values().forEach { column ->
             with(cellBuilder) {
                 columnIdx(column.idx())
-                _styleManager.applyStyle(column, play, cellBuilder)
+                _styleManager.applyStyle(column, players, winner, cellBuilder)
 
                 when (column) {
                     TIMESTAMP       -> build(timestamp)

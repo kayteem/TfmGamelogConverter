@@ -3,13 +3,12 @@ package de.kayteem.apps.tfmgamelogconverter.controller.export.style
 import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellBuilder
 import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.PlaysSheetFactory.Companion.PlaysColumns
 import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.PlaysSheetFactory.Companion.PlaysColumns.*
-import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.CENTERED_INT_DATA_STYLE
-import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.CENTERED_STRING_DATA_BOLD_STYLE
-import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.CENTERED_STRING_DATA_STYLE
-import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.CENTERED_TIMESTAMP_DATA_STYLE
+import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.INT_DATA_STYLE
 import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.PRIMARY_HEADER_STYLE
 import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.SECONDARY_HEADER_STYLE
-import de.kayteem.apps.tfmgamelogconverter.model.internal.Play
+import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.STRING_DATA_BOLD_STYLE
+import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.STRING_DATA_STYLE
+import de.kayteem.apps.tfmgamelogconverter.controller.export.style.StyleManager.Companion.TIMESTAMP_DATA_STYLE
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Player
 import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
@@ -44,7 +43,7 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
         )
 
         registerStyle(
-            CENTERED_STRING_DATA_STYLE,
+            STRING_DATA_STYLE,
             cellStyleBuilder
                 .fontSize(10)
                 .bold(false)
@@ -54,7 +53,7 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
         )
 
         registerStyle(
-            CENTERED_STRING_DATA_BOLD_STYLE,
+            STRING_DATA_BOLD_STYLE,
             cellStyleBuilder
                 .fontSize(10)
                 .bold(true)
@@ -64,7 +63,7 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
         )
 
         registerStyle(
-            CENTERED_INT_DATA_STYLE,
+            INT_DATA_STYLE,
             cellStyleBuilder
                 .fontSize(10)
                 .bold(false)
@@ -74,7 +73,7 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
         )
 
         registerStyle(
-            CENTERED_TIMESTAMP_DATA_STYLE,
+            TIMESTAMP_DATA_STYLE,
             cellStyleBuilder
                 .fontSize(10)
                 .bold(false)
@@ -86,53 +85,65 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
 
 
     // interface
-    fun applyStyle(column: PlaysColumns, play: Play, cellBuilder: CellBuilder): CellBuilder {
+    fun applyStyle(column: PlaysColumns, players: List<Player>, winner: Player?, cellBuilder: CellBuilder): CellBuilder {
         return when(column) {
             TIMESTAMP       -> applyStyle(SECONDARY_HEADER_STYLE, cellBuilder)
             BOARD           -> applyStyle(SECONDARY_HEADER_STYLE, cellBuilder)
             GENERATIONS     -> applyStyle(SECONDARY_HEADER_STYLE, cellBuilder)
 
-            PLAYER_1_NAME   -> applyPlayerNameStyle(play.players.getOrNull(0), username, cellBuilder)
-            PLAYER_1_CORP   -> applyStyle(CENTERED_STRING_DATA_STYLE, cellBuilder)
-            PLAYER_1_SCORE  -> applyIntDataStyle(play.players.getOrNull(0), cellBuilder)
-            PLAYER_1_ELO    -> applyIntDataStyle(play.players.getOrNull(0), cellBuilder)
+            PLAYER_1_NAME   -> applyPlayerNameStyle(players.getOrNull(0), username, cellBuilder)
+            PLAYER_1_CORP   -> applyStyle(STRING_DATA_STYLE, cellBuilder)
+            PLAYER_1_SCORE  -> applyScoreStyle(players.getOrNull(0), winner, cellBuilder)
+            PLAYER_1_ELO    -> applyEloStyle(players.getOrNull(0), cellBuilder)
 
-            PLAYER_2_NAME   -> applyPlayerNameStyle(play.players.getOrNull(1), username, cellBuilder)
-            PLAYER_2_CORP   -> applyStyle(CENTERED_STRING_DATA_STYLE, cellBuilder)
-            PLAYER_2_SCORE  -> applyIntDataStyle(play.players.getOrNull(1), cellBuilder)
-            PLAYER_2_ELO    -> applyIntDataStyle(play.players.getOrNull(2), cellBuilder)
+            PLAYER_2_NAME   -> applyPlayerNameStyle(players.getOrNull(1), username, cellBuilder)
+            PLAYER_2_CORP   -> applyStyle(STRING_DATA_STYLE, cellBuilder)
+            PLAYER_2_SCORE  -> applyScoreStyle(players.getOrNull(1), winner, cellBuilder)
+            PLAYER_2_ELO    -> applyEloStyle(players.getOrNull(2), cellBuilder)
 
-            PLAYER_3_NAME   -> applyPlayerNameStyle(play.players.getOrNull(2), username, cellBuilder)
-            PLAYER_3_CORP   -> applyStyle(CENTERED_STRING_DATA_STYLE, cellBuilder)
-            PLAYER_3_SCORE  -> applyIntDataStyle(play.players.getOrNull(2), cellBuilder)
-            PLAYER_3_ELO    -> applyIntDataStyle(play.players.getOrNull(2), cellBuilder)
+            PLAYER_3_NAME   -> applyPlayerNameStyle(players.getOrNull(2), username, cellBuilder)
+            PLAYER_3_CORP   -> applyStyle(STRING_DATA_STYLE, cellBuilder)
+            PLAYER_3_SCORE  -> applyScoreStyle(players.getOrNull(2), winner, cellBuilder)
+            PLAYER_3_ELO    -> applyEloStyle(players.getOrNull(2), cellBuilder)
 
-            PLAYER_4_NAME   -> applyPlayerNameStyle(play.players.getOrNull(3), username, cellBuilder)
-            PLAYER_4_CORP   -> applyStyle(CENTERED_STRING_DATA_STYLE, cellBuilder)
-            PLAYER_4_SCORE  -> applyIntDataStyle(play.players.getOrNull(3), cellBuilder)
-            PLAYER_4_ELO    -> applyIntDataStyle(play.players.getOrNull(3), cellBuilder)
+            PLAYER_4_NAME   -> applyPlayerNameStyle(players.getOrNull(3), username, cellBuilder)
+            PLAYER_4_CORP   -> applyStyle(STRING_DATA_STYLE, cellBuilder)
+            PLAYER_4_SCORE  -> applyScoreStyle(players.getOrNull(3), winner, cellBuilder)
+            PLAYER_4_ELO    -> applyEloStyle(players.getOrNull(3), cellBuilder)
 
-            PLAYER_5_NAME   -> applyPlayerNameStyle(play.players.getOrNull(4), username, cellBuilder)
-            PLAYER_5_CORP   -> applyStyle(CENTERED_STRING_DATA_STYLE, cellBuilder)
-            PLAYER_5_SCORE  -> applyIntDataStyle(play.players.getOrNull(4), cellBuilder)
-            PLAYER_5_ELO    -> applyIntDataStyle(play.players.getOrNull(4), cellBuilder)
+            PLAYER_5_NAME   -> applyPlayerNameStyle(players.getOrNull(4), username, cellBuilder)
+            PLAYER_5_CORP   -> applyStyle(STRING_DATA_STYLE, cellBuilder)
+            PLAYER_5_SCORE  -> applyScoreStyle(players.getOrNull(4), winner, cellBuilder)
+            PLAYER_5_ELO    -> applyEloStyle(players.getOrNull(4), cellBuilder)
         }
     }
 
 
     // helpers
     private fun applyPlayerNameStyle(player: Player?, username: String, cellBuilder: CellBuilder): CellBuilder {
-        val styleName =
-            if (player != null && player.name == username) CENTERED_STRING_DATA_BOLD_STYLE
-            else CENTERED_STRING_DATA_STYLE
+        val styleName = when {
+            player != null && player.name == username -> STRING_DATA_BOLD_STYLE
+            else -> STRING_DATA_STYLE
+        }
 
         return applyStyle(styleName, cellBuilder)
     }
 
-    private fun applyIntDataStyle(player: Player?, cellBuilder: CellBuilder): CellBuilder {
-        val styleName =
-            if (player != null) CENTERED_INT_DATA_STYLE
-            else CENTERED_STRING_DATA_STYLE
+    private fun applyScoreStyle(player: Player?, winner: Player?, cellBuilder: CellBuilder): CellBuilder {
+        val styleName = when (player) {
+            null -> STRING_DATA_STYLE
+            winner -> SECONDARY_HEADER_STYLE
+            else -> INT_DATA_STYLE
+        }
+
+        return applyStyle(styleName, cellBuilder)
+    }
+
+    private fun applyEloStyle(player: Player?, cellBuilder: CellBuilder): CellBuilder {
+        val styleName = when {
+            player != null -> INT_DATA_STYLE
+            else -> STRING_DATA_STYLE
+        }
 
         return applyStyle(styleName, cellBuilder)
     }

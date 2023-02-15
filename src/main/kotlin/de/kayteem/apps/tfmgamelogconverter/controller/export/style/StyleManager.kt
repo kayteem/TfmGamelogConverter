@@ -20,10 +20,10 @@ interface StyleManager {
     companion object {
         const val PRIMARY_HEADER_STYLE = "PRIMARY_HEADER"
         const val SECONDARY_HEADER_STYLE = "SECONDARY_HEADER"
-        const val CENTERED_STRING_DATA_STYLE = "CENTERED_STRING_DATA"
-        const val CENTERED_STRING_DATA_BOLD_STYLE = "CENTERED_STRING_DATA_BOLD"
-        const val CENTERED_INT_DATA_STYLE = "CENTERED_INT_DATA"
-        const val CENTERED_TIMESTAMP_DATA_STYLE = "CENTERED_TIMESTAMP_DATA"
+        const val STRING_DATA_STYLE = "STRING_DATA"
+        const val STRING_DATA_BOLD_STYLE = "STRING_DATA_BOLD"
+        const val INT_DATA_STYLE = "INT_DATA"
+        const val TIMESTAMP_DATA_STYLE = "TIMESTAMP_DATA"
     }
 
 }

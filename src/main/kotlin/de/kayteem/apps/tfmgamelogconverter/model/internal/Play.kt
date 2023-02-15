@@ -10,4 +10,10 @@ data class Play(
     val board: String,
     val generations: Int,
     val players: List<Player>
-)
+) {
+
+    fun winner(): Player? {
+        return players.maxByOrNull { it.finalScore }
+    }
+
+}
