@@ -11,22 +11,22 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Players(
     @JsonAlias("1")
-    val player1: Player,
+    val player1: LogPlayer,
 
     @JsonAlias("2")
-    val player2: Player,
+    val player2: LogPlayer,
 
     @JsonAlias("3")
-    val player3: Player? = null,
+    val player3: LogPlayer? = null,
 
     @JsonAlias("4")
-    val player4: Player? = null,
+    val player4: LogPlayer? = null,
 
     @JsonAlias("5")
-    val player5: Player? = null,
+    val player5: LogPlayer? = null,
 ) {
 
-    fun all(): List<Player> {
+    fun all(): List<LogPlayer> {
         val list = mutableListOf(player1, player2)
 
         if (player3 != null) {

@@ -1,7 +1,8 @@
+package de.kayteem.apps.tfmgamelogconverter.controller.jsonImport
+
+import TestDataFactory
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogImporter
-import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogJsonImporter
 import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.GameLog
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
@@ -11,14 +12,14 @@ import java.nio.file.Path
 import kotlin.io.path.toPath
 
 /**
- * Created by Tobias Mielke
- * Created on 20.01.2023
- * Changed on 20.01.2023
+ * Test Suite for GameLogJsonImporter
+ *
+ * Author: Tobias Mielke
  */
-class AGameLogImporter {
+class AGameLogJsonImporter {
 
     // unit under test
-    private lateinit var importer: GameLogImporter
+    private lateinit var importer: GameLogJsonImporter
 
 
     // test cases
@@ -38,7 +39,7 @@ class AGameLogImporter {
         }
 
         // post-condition
-        assertEquals(EXPECTED_LOG_GAME_1, keepOnlyLastTurn(gameLog!!))
+        assertEquals(EXPECTED_GAME_LOG_1, keepOnlyLastTurn(gameLog!!))
         
         assertEquals(EXPECTED_GENERATIONS_GAME_1, gameLog.generations())
         
@@ -67,7 +68,7 @@ class AGameLogImporter {
         assertEquals(2, gameLogs.size)
 
         // game 1
-        assertEquals(EXPECTED_LOG_GAME_1, keepOnlyLastTurn(gameLogs[0]))
+        assertEquals(EXPECTED_GAME_LOG_1, keepOnlyLastTurn(gameLogs[0]))
 
         assertEquals(EXPECTED_GENERATIONS_GAME_1, gameLogs[0].generations())
 
@@ -80,7 +81,7 @@ class AGameLogImporter {
         )
 
         // game 2
-        assertEquals(EXPECTED_LOG_GAME_2, keepOnlyLastTurn(gameLogs[1]))
+        assertEquals(EXPECTED_GAME_LOG_2, keepOnlyLastTurn(gameLogs[1]))
 
         assertEquals(EXPECTED_GENERATIONS_GAME_2, gameLogs[1].generations())
 
@@ -107,25 +108,25 @@ class AGameLogImporter {
     companion object {
 
         // constants - common
-        private const val RES_DIRECTORY = "exampleJson/"
+        private const val RES_DIRECTORY = "/exampleJson/"
 
         // constants - game 1
         const val RES_LOG_GAME_1: String = "gamelog_2023-01-10"
 
-        private val EXPECTED_PLAYER_1_GAME_1 = TestDataFactory.buildPlayer1Game1()
-        private val EXPECTED_PLAYER_2_GAME_1 = TestDataFactory.buildPlayer2Game1()
-        private const val EXPECTED_GENERATIONS_GAME_1 = 11
-        private const val EXPECTED_SCORE_1_GAME_1 = 102
-        private const val EXPECTED_SCORE_2_GAME_1 = 98
-        val EXPECTED_LOG_GAME_1 = TestDataFactory.buildLogGame1()
+        private val EXPECTED_PLAYER_1_GAME_1 = TestDataFactory.buildLogPlayer1Game1()
+        private val EXPECTED_PLAYER_2_GAME_1 = TestDataFactory.buildLogPlayer2Game1()
+        private val EXPECTED_GENERATIONS_GAME_1 = TestDataFactory.buildGenerationsGame1()
+        private val EXPECTED_SCORE_1_GAME_1 = TestDataFactory.buildScore1Game1()
+        private val EXPECTED_SCORE_2_GAME_1 = TestDataFactory.buildScore2Game1()
+        val EXPECTED_GAME_LOG_1 = TestDataFactory.buildGameLog1()
 
         // constants - game 2
-        private val EXPECTED_PLAYER_1_GAME_2 = TestDataFactory.buildPlayer1Game2()
-        private val EXPECTED_PLAYER_2_GAME_2 = TestDataFactory.buildPlayer2Game2()
-        private const val EXPECTED_GENERATIONS_GAME_2 = 12
-        private const val EXPECTED_SCORE_1_GAME_2 = 130
-        private const val EXPECTED_SCORE_2_GAME_2 = 69
-        val EXPECTED_LOG_GAME_2 = TestDataFactory.buildLogGame2()
+        private val EXPECTED_PLAYER_1_GAME_2 = TestDataFactory.buildLogPlayer1Game2()
+        private val EXPECTED_PLAYER_2_GAME_2 = TestDataFactory.buildLogPlayer2Game2()
+        private val EXPECTED_GENERATIONS_GAME_2 = TestDataFactory.buildGenerationsGame2()
+        private val EXPECTED_SCORE_1_GAME_2 = TestDataFactory.buildScore1Game2()
+        private val EXPECTED_SCORE_2_GAME_2 = TestDataFactory.buildScore2Game2()
+        val EXPECTED_GAME_LOG_2 = TestDataFactory.buildGameLog2()
 
         // utils
         fun loadJsonResource(resourceFilename: String): Path? {

@@ -29,7 +29,7 @@ data class GameLog(
         return turns.maxOf { it.generation }
     }
 
-    fun finalScores(): Map<Player, Int> {
+    fun finalScores(): Map<LogPlayer, Int> {
         val allPlayers = players.all()
 
         return allPlayers.associateWith {

@@ -1,19 +1,21 @@
+package de.kayteem.apps.tfmgamelogconverter.controller.export
+
+import TestDataFactory
 import de.kayteem.apps.tfmgamelogconverter.controller.export.plays.PlaysExcelExporter
-import de.kayteem.apps.tfmgamelogconverter.controller.export.plays.PlaysExporter
 import org.junit.Assert
 import org.junit.Test
 import java.nio.file.Path
 import java.nio.file.Paths
 
 /**
- * Test Suite for PlaysExporter
+ * Test Suite for PlaysExcelExporter
  *
  * Author: Tobias Mielke
  */
-class APlaysExporter {
+class APlaysExcelExporter {
 
     // unit under test
-    private lateinit var exporter: PlaysExporter
+    private lateinit var exporter: PlaysExcelExporter
 
 
     // test cases

@@ -5,7 +5,7 @@ package de.kayteem.apps.tfmgamelogconverter.model.xlsxExport
  *
  * Author: Tobias Mielke
  */
-data class Play(
+data class ExcelPlay(
     val timestamp: String,
     val board: String,
     val generations: Int,

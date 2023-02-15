@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
  * Author: Tobias Mielke
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Player(
+data class LogPlayer(
     val name: String,
     val color: String,
     val corporation: String,
