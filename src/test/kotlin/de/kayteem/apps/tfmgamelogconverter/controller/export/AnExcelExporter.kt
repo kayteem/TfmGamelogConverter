@@ -1,7 +1,7 @@
 package de.kayteem.apps.tfmgamelogconverter.controller.export
 
 import TestDataFactory
-import de.kayteem.apps.tfmgamelogconverter.controller.export.plays.PlaysExcelExporter
+import de.kayteem.apps.tfmgamelogconverter.controller.export.common.ExcelExporter
 import org.junit.Assert
 import org.junit.Test
 import java.nio.file.Path
@@ -12,10 +12,10 @@ import java.nio.file.Paths
  *
  * Author: Tobias Mielke
  */
-class APlaysExcelExporter {
+class AnExcelExporter {
 
     // unit under test
-    private lateinit var exporter: PlaysExcelExporter
+    private lateinit var exporter: ExcelExporter
 
 
     // test cases
@@ -24,7 +24,7 @@ class APlaysExcelExporter {
 
         // setup
         val plays = listOf(PLAY_1, PLAY_2)
-        exporter = PlaysExcelExporter()
+        exporter = ExcelExporter()
 
         // execution
         exporter.export(PATH_EXCEL, plays)

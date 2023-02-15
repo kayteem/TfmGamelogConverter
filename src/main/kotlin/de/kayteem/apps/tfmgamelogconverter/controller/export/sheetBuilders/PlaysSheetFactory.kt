@@ -1,9 +1,8 @@
-package de.kayteem.apps.tfmgamelogconverter.controller.export.plays
+package de.kayteem.apps.tfmgamelogconverter.controller.export.sheetBuilders
 
-import de.kayteem.apps.tfmgamelogconverter.controller.converters.PlaysToUsernameConverter
 import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellBuilder
 import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellStyleBuilder
-import de.kayteem.apps.tfmgamelogconverter.controller.export.plays.PlaysExcelExporter.Companion.Columns.*
+import de.kayteem.apps.tfmgamelogconverter.controller.export.sheetBuilders.PlaysSheetFactory.Companion.Columns.*
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Play
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Player
 import org.apache.poi.ss.usermodel.BorderStyle
@@ -13,26 +12,21 @@ import org.apache.poi.ss.util.RegionUtil
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import java.io.FileOutputStream
-import java.nio.file.Path
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 /**
- * Implementation for exporting Play objects to an Excel file.
- *
- * Excel export tutorials:
- * https://www.developersoapbox.com/basic-read-and-write-excel-using-kotlin/
- * https://www.baeldung.com/apache-poi-background-color
+ * A Factory for creating the "Plays" sheet in the Excel workbook.
  *
  * Author: Tobias Mielke
  */
-class PlaysExcelExporter : PlaysExporter {
+class PlaysSheetFactory(private val workbook: XSSFWorkbook) {
 
-    // members
+    // dependencies
     private lateinit var _username: String
 
-    private lateinit var _workbook: XSSFWorkbook
+
+    // members
     private lateinit var _sheet: XSSFSheet
     private lateinit var _cellStyleBuilder: CellStyleBuilder
 
@@ -45,27 +39,22 @@ class PlaysExcelExporter : PlaysExporter {
 
 
     // interface
-    override fun export(path: Path, plays: List<Play>) {
-        val playsToUsernameConverter = PlaysToUsernameConverter()
-        _username = playsToUsernameConverter.process(plays)
-
-        _workbook = XSSFWorkbook()
-        _sheet = _workbook.createSheet("Plays")
+    fun create(plays: List<Play>, username: String): XSSFSheet {
+        _username = username
+        _sheet = workbook.createSheet("Plays")
 
         buildCellStyles()
         setColumnsWidths()
         populateSheet(plays)
         mergeAndBorderHeaderCells()
 
-        val fos = FileOutputStream(path.toFile())
-        _workbook.write(fos)
-        _workbook.close()
+        return _sheet
     }
 
 
     // helpers
     private fun buildCellStyles() {
-        _cellStyleBuilder = CellStyleBuilder(_workbook)
+        _cellStyleBuilder = CellStyleBuilder(workbook)
 
         _topHeaderCellStyle = _cellStyleBuilder
             .fontSize(12)

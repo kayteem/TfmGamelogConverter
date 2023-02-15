@@ -3,7 +3,7 @@ package de.kayteem.apps.tfmgamelogconverter
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import de.kayteem.apps.tfmgamelogconverter.controller.converters.GameLogToPlayConverter
-import de.kayteem.apps.tfmgamelogconverter.controller.export.plays.PlaysExcelExporter
+import de.kayteem.apps.tfmgamelogconverter.controller.export.common.ExcelExporter
 import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogImporter
 import de.kayteem.apps.tfmgamelogconverter.controller.jsonImport.GameLogJsonImporter
 import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.GameLog
@@ -29,7 +29,7 @@ fun main() {
     val plays = gameLogs.map { converter.process(it) }
 
     // export all plays
-    val exporter = PlaysExcelExporter()
+    val exporter = ExcelExporter()
     val excelPath: Path = executionPath.resolve("TfmGameData.xlsx")
     exporter.export(excelPath, plays)
     println("Export of ${plays.size} plays finished: $excelPath")
