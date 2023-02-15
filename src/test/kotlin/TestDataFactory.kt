@@ -1,6 +1,5 @@
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Play
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Player
-import de.kayteem.apps.tfmgamelogconverter.model.xlsxExport.ExcelPlay
 import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.*
 import kotlin.math.roundToInt
 
@@ -97,26 +96,6 @@ object TestDataFactory {
         )
     }
 
-    fun buildExcelPlay1(): ExcelPlay {
-        val play1 = buildPlay1()
-        val player1 = play1.players[0]
-        val player2 = play1.players[1]
-
-        return ExcelPlay(
-            timestamp = play1.timestamp,
-            board = play1.board,
-            generations = play1.generations,
-            player1Name = player1.name,
-            player1Corp = player1.corporation,
-            player1Elo = player1.elo,
-            player1Score = player1.finalScore,
-            player2Name = player2.name,
-            player2Corp = player2.corporation,
-            player2Elo = player2.elo,
-            player2Score = player2.finalScore
-        )
-    }
-
 
     // play 2
     fun buildLogPlayer1Game2(): LogPlayer {
@@ -201,26 +180,6 @@ object TestDataFactory {
             board = gameLog2.board,
             generations = gameLog2.generations(),
             players = listOf(player1Game2, player2Game2)
-        )
-    }
-
-    fun buildExcelPlay2(): ExcelPlay {
-        val play2 = buildPlay2()
-        val player1 = play2.players[0]
-        val player2 = play2.players[1]
-
-        return ExcelPlay(
-            timestamp = play2.timestamp,
-            board = play2.board,
-            generations = play2.generations,
-            player1Name = player1.name,
-            player1Corp = player1.corporation,
-            player1Elo = player1.elo,
-            player1Score = player1.finalScore,
-            player2Name = player2.name,
-            player2Corp = player2.corporation,
-            player2Elo = player2.elo,
-            player2Score = player2.finalScore
         )
     }
 

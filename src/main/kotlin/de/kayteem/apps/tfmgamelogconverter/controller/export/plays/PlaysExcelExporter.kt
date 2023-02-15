@@ -1,11 +1,10 @@
 package de.kayteem.apps.tfmgamelogconverter.controller.export.plays
 
-import de.kayteem.apps.tfmgamelogconverter.controller.converters.PlayToExcelPlayConverter
 import de.kayteem.apps.tfmgamelogconverter.controller.converters.PlaysToUsernameConverter
 import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellBuilder
 import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellStyleBuilder
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Play
-import de.kayteem.apps.tfmgamelogconverter.model.xlsxExport.ExcelPlay
+import de.kayteem.apps.tfmgamelogconverter.model.internal.Player
 import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.ss.util.CellRangeAddress
@@ -46,9 +45,6 @@ class PlaysExcelExporter : PlaysExporter {
 
     // interface
     override fun export(path: Path, plays: List<Play>) {
-        val playToExcelPlayConverter = PlayToExcelPlayConverter()
-        val excelPlays = plays.map { playToExcelPlayConverter.process(it) }
-
         val playsToUsernameConverter = PlaysToUsernameConverter()
         _username = playsToUsernameConverter.process(plays)
 
@@ -57,7 +53,7 @@ class PlaysExcelExporter : PlaysExporter {
 
         buildCellStyles()
         setColumnsWidths()
-        populateSheet(excelPlays)
+        populateSheet(plays)
         mergeAndBorderHeaderCells()
 
         val fos = FileOutputStream(path.toFile())
@@ -161,7 +157,7 @@ class PlaysExcelExporter : PlaysExporter {
         RegionUtil.setBorderBottom(BORDER_STYLE, range, _sheet)
     }
 
-    private fun populateSheet(excelPlays: List<ExcelPlay>) {
+    private fun populateSheet(plays: List<Play>) {
 
         // populate header rows
         populateTopHeaderRow()
@@ -169,8 +165,8 @@ class PlaysExcelExporter : PlaysExporter {
 
         // populate data rows
         var firstDataRowIdx = ROW_IDX_FIRST_DATA_ROW
-        excelPlays.forEach { excelPlay ->
-            populateDataRow(firstDataRowIdx, excelPlay)
+        plays.forEach { play ->
+            populateDataRow(firstDataRowIdx, play)
             firstDataRowIdx++
         }
 
@@ -228,90 +224,64 @@ class PlaysExcelExporter : PlaysExporter {
         }
     }
 
-    private fun populateDataRow(rowIdx: Int, excelPlay: ExcelPlay) {
+    private fun populateDataRow(rowIdx: Int, play: Play) {
         val row = _sheet.createRow(rowIdx)
-        
-        val date = LocalDateTime.parse(excelPlay.timestamp, DateTimeFormatter.ISO_DATE_TIME)
 
         val cellBuilder = CellBuilder(row, _stringDataCenterCellStyle)
 
-        // timestamp
-        cellBuilder
-            .columnIdx(COL_IDX_TIMESTAMP)
-            .cellStyle(_timestampCellStyle)
-            .build(date)
+        with(cellBuilder) {
+            val date = LocalDateTime.parse(play.timestamp, DateTimeFormatter.ISO_DATE_TIME)
+            columnIdx(COL_IDX_TIMESTAMP).cellStyle(_timestampCellStyle).build(date)
+            columnIdx(COL_IDX_BOARD).cellStyle(_bottomHeaderCellStyle).build(play.board)
+            columnIdx(COL_IDX_GENERATIONS).cellStyle(_bottomHeaderCellStyle).build(play.generations)
 
-        // board
-        cellBuilder
-            .columnIdx(COL_IDX_BOARD)
-            .cellStyle(_bottomHeaderCellStyle)
-            .build(excelPlay.board)
-
-        // generations
-        cellBuilder
-            .columnIdx(COL_IDX_GENERATIONS)
-            .cellStyle(_bottomHeaderCellStyle)
-            .build(excelPlay.generations)
-
-        // player data
-        with(excelPlay) {
             populatePlayerData(
-                player1Name, player1Corp, player1Score, player1Elo, 
                 COL_IDX_PLAYER_1_NAME, COL_IDX_PLAYER_1_CORP, COL_IDX_PLAYER_1_SCORE, COL_IDX_PLAYER_1_ELO,
-                cellBuilder
+                play.players.getOrNull(0), cellBuilder
             )
+
             populatePlayerData(
-                player2Name, player2Corp, player2Score, player2Elo,
                 COL_IDX_PLAYER_2_NAME, COL_IDX_PLAYER_2_CORP, COL_IDX_PLAYER_2_SCORE, COL_IDX_PLAYER_2_ELO,
-                cellBuilder
+                play.players.getOrNull(1), cellBuilder
             )
+
             populatePlayerData(
-                player3Name, player3Corp, player3Score, player3Elo,
                 COL_IDX_PLAYER_3_NAME, COL_IDX_PLAYER_3_CORP, COL_IDX_PLAYER_3_SCORE, COL_IDX_PLAYER_3_ELO,
-                cellBuilder
+                play.players.getOrNull(2), cellBuilder
             )
+
             populatePlayerData(
-                player4Name, player4Corp, player4Score, player4Elo,
                 COL_IDX_PLAYER_4_NAME, COL_IDX_PLAYER_4_CORP, COL_IDX_PLAYER_4_SCORE, COL_IDX_PLAYER_4_ELO,
-                cellBuilder
+                play.players.getOrNull(3), cellBuilder
             )
+
             populatePlayerData(
-                player5Name, player5Corp, player5Score, player5Elo,
                 COL_IDX_PLAYER_5_NAME, COL_IDX_PLAYER_5_CORP, COL_IDX_PLAYER_5_SCORE, COL_IDX_PLAYER_5_ELO,
-                cellBuilder
+                play.players.getOrNull(4), cellBuilder
             )
         }
     }
 
-    private fun populatePlayerData(name: String?, corp: String?, score: Int?, elo: Int?, nameColIdx: Int, corpColIdx: Int, scoreColIdx: Int, eloColIdx: Int, cellBuilder: CellBuilder) {
+    private fun populatePlayerData(nameColIdx: Int, corpColIdx: Int, scoreColIdx: Int, eloColIdx: Int, player: Player?, cellBuilder: CellBuilder) {
+        with(cellBuilder) {
+            if (player == null) {
+                columnIdx(nameColIdx).cellStyle(_stringDataCenterCellStyle).build("")
+                columnIdx(corpColIdx).cellStyle(_stringDataCenterCellStyle).build("")
+                columnIdx(scoreColIdx).cellStyle(_stringDataCenterCellStyle).build("")
+                columnIdx(eloColIdx).cellStyle(_stringDataCenterCellStyle).build("")
+            }
 
-        // name
-        val nameCellStyle =
-            if (name == _username) _boldStringDataCenterCellStyle
-            else _stringDataCenterCellStyle
+            else {
+                val nameCellStyle =
+                    if (player.name == _username) _boldStringDataCenterCellStyle
+                    else _stringDataCenterCellStyle
 
-        cellBuilder
-            .columnIdx(nameColIdx)
-            .cellStyle(nameCellStyle)
-            .build(name)
-
-        // corp
-        cellBuilder
-            .columnIdx(corpColIdx)
-            .cellStyle(_stringDataCenterCellStyle)
-            .build(corp)
-
-        // score
-        cellBuilder
-            .columnIdx(scoreColIdx)
-            .cellStyle(_intDataCellStyle)
-            .build(score)
-
-        // elo
-        cellBuilder
-            .columnIdx(eloColIdx)
-            .cellStyle(_intDataCellStyle)
-            .build(elo)
+                columnIdx(nameColIdx).cellStyle(nameCellStyle).build(player.name)
+                columnIdx(corpColIdx).cellStyle(_stringDataCenterCellStyle).build(player.corporation)
+                columnIdx(scoreColIdx).cellStyle(_intDataCellStyle).build(player.finalScore)
+                columnIdx(eloColIdx).cellStyle(_intDataCellStyle).build(player.elo)
+            }
+        }
     }
 
 
