@@ -20,7 +20,7 @@ Corps (filtered for Tharsis map):
 
 ## QuickStart Guide
 - This application requires no installation.
-- Simply download the [.zip archive](https://github.com/kayteem/TfmGamelogConverter/blob/main/executable/TfmGamelogConverter%20v1.3.zip) and extract the contents (.jar file and .bat file)  
+- Simply download the [.zip archive](https://github.com/kayteem/TfmGamelogConverter/blob/main/executable/TfmGamelogConverter%20v1.4.zip) and extract the contents (.jar file and .bat file)  
   to whereever your GameLog JSON files are located at, which usually should be at  
   Steam\SteamApps\common\Terraforming Mars\Logs\GameLogs.
 - In order to run the application, simply double-click the extracted batch file (.bat)
