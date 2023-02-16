@@ -80,9 +80,13 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
             if (board != null) corp.playedOnMapTotal().getOrDefault(board, 0)
             else corp.playedTotal()
 
-        val winRateYou: Int = 25
+        val wonByYou: Int = 10
+        val wonByOpponents: Int = 20
+        val wonTotal: Int = 30
+
+        val winRateYou: Int = 40
         val winRateOpponents: Int = 50
-        val winRateTotal: Int = 45
+        val winRateTotal: Int = 60
 
         CorpsColumns.values().forEach { column ->
             with(cellBuilder) {
@@ -98,6 +102,10 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
                     PLAYED_BY_OPPONENTS -> build(playedByOpponents)
                     PLAYED_TOTAL        -> build(playedTotal)
 
+                    WON_BY_YOU          -> build(wonByYou)
+                    WON_BY_OPPONENTS    -> build(wonByOpponents)
+                    WON_TOTAL           -> build(wonTotal)
+
                     WIN_RATE_YOU        -> build(winRateYou)
                     WIN_RATE_OPPONENTS  -> build(winRateOpponents)
                     WIN_RATE_TOTAL      -> build(winRateTotal)
@@ -110,6 +118,7 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
         mergeAndBorderCells(RANGE_CORPORATION, BORDER_STYLE)
         mergeAndBorderCells(RANGE_BOARD, BORDER_STYLE)
         mergeAndBorderCells(RANGE_PLAYED, BORDER_STYLE)
+        mergeAndBorderCells(RANGE_WON, BORDER_STYLE)
         mergeAndBorderCells(RANGE_WIN_RATE, BORDER_STYLE)
     }
 
@@ -124,6 +133,9 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
             PLAYED_BY_YOU,
             PLAYED_BY_OPPONENTS,
             PLAYED_TOTAL,
+            WON_BY_YOU,
+            WON_BY_OPPONENTS,
+            WON_TOTAL,
             WIN_RATE_YOU,
             WIN_RATE_OPPONENTS,
             WIN_RATE_TOTAL,
@@ -138,6 +150,11 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
         private const val HEADER_STR_PLAYED_BY_OPPONENTS = "By Opponents"
         private const val HEADER_STR_PLAYED_TOTAL = "Total"
 
+        private const val HEADER_STR_WON = "Won"
+        private const val HEADER_STR_WON_BY_YOU = "By You"
+        private const val HEADER_STR_WON_BY_OPPONENTS = "By Opponents"
+        private const val HEADER_STR_WON_TOTAL = "Total"
+
         private const val HEADER_STR_WIN_RATE = "Win Rate"
         private const val HEADER_STR_WIN_RATE_YOU = "You"
         private const val HEADER_STR_WIN_RATE_OPPONENTS = "Opponents"
@@ -147,6 +164,7 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
             CORPORATION to HEADER_STR_CORPORATION,
             BOARD to HEADER_STR_BOARD,
             PLAYED_BY_YOU to HEADER_STR_PLAYED,
+            WON_BY_YOU to HEADER_STR_WON,
             WIN_RATE_YOU to HEADER_STR_WIN_RATE,
         )
 
@@ -154,6 +172,9 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
             PLAYED_BY_YOU to HEADER_STR_PLAYED_BY_YOU,
             PLAYED_BY_OPPONENTS to HEADER_STR_PLAYED_BY_OPPONENTS,
             PLAYED_TOTAL to HEADER_STR_PLAYED_TOTAL,
+            WON_BY_YOU to HEADER_STR_WON_BY_YOU,
+            WON_BY_OPPONENTS to HEADER_STR_WON_BY_OPPONENTS,
+            WON_TOTAL to HEADER_STR_WON_TOTAL,
             WIN_RATE_YOU to HEADER_STR_WIN_RATE_YOU,
             WIN_RATE_OPPONENTS to HEADER_STR_WIN_RATE_OPPONENTS,
             WIN_RATE_TOTAL to HEADER_STR_WIN_RATE_TOTAL,
@@ -171,6 +192,9 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
             PLAYED_BY_YOU to COL_WIDTH_DEFAULT,
             PLAYED_BY_OPPONENTS to COL_WIDTH_DEFAULT,
             PLAYED_TOTAL to COL_WIDTH_DEFAULT,
+            WON_BY_YOU to COL_WIDTH_DEFAULT,
+            WON_BY_OPPONENTS to COL_WIDTH_DEFAULT,
+            WON_TOTAL to COL_WIDTH_DEFAULT,
             WIN_RATE_YOU to COL_WIDTH_DEFAULT,
             WIN_RATE_OPPONENTS to COL_WIDTH_DEFAULT,
             WIN_RATE_TOTAL to COL_WIDTH_DEFAULT,
@@ -186,6 +210,7 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
         val RANGE_CORPORATION = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, CORPORATION.ordinal, CORPORATION.ordinal)
         val RANGE_BOARD = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, BOARD.ordinal, BOARD.ordinal)
         val RANGE_PLAYED = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYED_BY_YOU.ordinal, PLAYED_TOTAL.ordinal)
+        val RANGE_WON = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, WON_BY_YOU.ordinal, WON_TOTAL.ordinal)
         val RANGE_WIN_RATE = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, WIN_RATE_YOU.ordinal, WIN_RATE_TOTAL.ordinal)
         val RANGE_FILTERS = CellRangeAddress(ROW_IDX_BOTTOM_HEADER, ROW_IDX_BOTTOM_HEADER, CORPORATION.ordinal, WIN_RATE_TOTAL.ordinal)
 

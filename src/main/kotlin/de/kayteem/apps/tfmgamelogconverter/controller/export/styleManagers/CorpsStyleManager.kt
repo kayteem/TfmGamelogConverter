@@ -20,13 +20,17 @@ class CorpsStyleManager(workbook: XSSFWorkbook) : AbstractStyleManager(workbook)
             CORPORATION         -> applyCorporationStyle(cellBuilder)
             BOARD               -> applyBoardStyle(cellBuilder)
 
-            PLAYED_BY_YOU       -> applyPlayedStyle(boldRow, false, cellBuilder)
-            PLAYED_BY_OPPONENTS -> applyPlayedStyle(boldRow, false, cellBuilder)
-            PLAYED_TOTAL        -> applyPlayedTotalStyle(false, cellBuilder)
+            PLAYED_BY_YOU       -> applyIntStyle(boldRow, false, cellBuilder)
+            PLAYED_BY_OPPONENTS -> applyIntStyle(boldRow, false, cellBuilder)
+            PLAYED_TOTAL        -> applyTotalIntStyle(false, cellBuilder)
 
-            WIN_RATE_YOU        -> applyPlayedStyle(boldRow, true, cellBuilder)
-            WIN_RATE_OPPONENTS  -> applyPlayedStyle(boldRow, true, cellBuilder)
-            WIN_RATE_TOTAL      -> applyPlayedTotalStyle(true, cellBuilder)
+            WON_BY_YOU          -> applyIntStyle(boldRow, true, cellBuilder)
+            WON_BY_OPPONENTS    -> applyIntStyle(boldRow, true, cellBuilder)
+            WON_TOTAL           -> applyTotalIntStyle(true, cellBuilder)
+
+            WIN_RATE_YOU        -> applyIntStyle(boldRow, false, cellBuilder)
+            WIN_RATE_OPPONENTS  -> applyIntStyle(boldRow, false, cellBuilder)
+            WIN_RATE_TOTAL      -> applyTotalIntStyle(false, cellBuilder)
         }
     }
 
@@ -58,7 +62,7 @@ class CorpsStyleManager(workbook: XSSFWorkbook) : AbstractStyleManager(workbook)
         return cellBuilder.cellStyle(style)
     }
 
-    private fun applyPlayedStyle(bold: Boolean, shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
+    private fun applyIntStyle(bold: Boolean, shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
         val style = cellStyleBuilder
             .fontSize(10)
             .bold(bold)
@@ -71,7 +75,7 @@ class CorpsStyleManager(workbook: XSSFWorkbook) : AbstractStyleManager(workbook)
         return cellBuilder.cellStyle(style)
     }
 
-    private fun applyPlayedTotalStyle(shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
+    private fun applyTotalIntStyle(shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
         val style = cellStyleBuilder
             .fontSize(10)
             .bold(true)
