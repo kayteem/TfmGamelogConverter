@@ -10,9 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 /**
  * Creates and manages cell styles for the "Corps" sheet.
  *
- * TODO:
- * - use shadowing!
- * - extract common code into AbstractStyleManager!
+ * TODO: use shadowing!
  *
  * Author: Tobias Mielke
  */
@@ -28,32 +26,6 @@ class CorpsStyleManager(workbook: XSSFWorkbook) : AbstractStyleManager(workbook)
             PLAYED_BY_OPPONENTS -> applyPlayedStyle(false, cellBuilder)
             PLAYED_TOTAL        -> applyPlayedTotalStyle(false, cellBuilder)
         }
-    }
-
-    fun applyPrimaryHeaderStyle(cellBuilder: CellBuilder): CellBuilder {
-        val style = cellStyleBuilder
-            .fontSize(12)
-            .bold(true)
-            .stringFormat()
-            .textColor(IndexedColors.BLACK)
-            .cellForegroundColor(IndexedColors.LIGHT_GREEN)
-            .cellPattern(FillPatternType.SOLID_FOREGROUND)
-            .build()
-
-        return cellBuilder.cellStyle(style)
-    }
-
-    fun applySecondaryHeaderStyle(cellBuilder: CellBuilder): CellBuilder {
-        val style = cellStyleBuilder
-            .fontSize(10)
-            .bold(false)
-            .stringFormat()
-            .textColor(IndexedColors.BLACK)
-            .cellForegroundColor(IndexedColors.LIGHT_GREEN)
-            .cellPattern(FillPatternType.SOLID_FOREGROUND)
-            .build()
-
-        return cellBuilder.cellStyle(style)
     }
 
 
@@ -111,4 +83,3 @@ class CorpsStyleManager(workbook: XSSFWorkbook) : AbstractStyleManager(workbook)
     }
 
 }
-

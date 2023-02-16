@@ -1,12 +1,11 @@
-package de.kayteem.apps.tfmgamelogconverter.controller.export.sheets
+package de.kayteem.apps.tfmgamelogconverter.controller.export.sheetFactories
 
 import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellBuilder
-import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.PlaysSheetFactory.Companion.PlaysColumns.*
-import de.kayteem.apps.tfmgamelogconverter.controller.export.style.PlaysStyleManager
+import de.kayteem.apps.tfmgamelogconverter.controller.export.sheetFactories.PlaysSheetFactory.Companion.PlaysColumns.*
+import de.kayteem.apps.tfmgamelogconverter.controller.export.styleManagers.PlaysStyleManager
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Play
 import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.util.CellRangeAddress
-import org.apache.poi.ss.util.RegionUtil
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.time.LocalDateTime
@@ -28,7 +27,7 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
         sheet = workbook.createSheet("Plays")
         _styleManager = PlaysStyleManager(workbook, username)
 
-        setColumnsWidths()
+        setColumnsWidths(columnWidths)
         populateSheet(plays)
         mergeAndBorderHeaderCells()
 
@@ -37,37 +36,11 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
 
 
     // helpers
-    private fun setColumnsWidths() {
-        PlaysColumns.values().forEach { column ->
-            sheet.setColumnWidth(column.idx(), columnWidths[column]!!)
-        }
-    }
-
-    private fun mergeAndBorderHeaderCells() {
-        mergeAndBorderCells(RANGE_TIMESTAMP)
-        mergeAndBorderCells(RANGE_BOARD)
-        mergeAndBorderCells(RANGE_GENERATIONS)
-        mergeAndBorderCells(RANGE_PLAYER_1)
-        mergeAndBorderCells(RANGE_PLAYER_2)
-        mergeAndBorderCells(RANGE_PLAYER_3)
-        mergeAndBorderCells(RANGE_PLAYER_4)
-        mergeAndBorderCells(RANGE_PLAYER_5)
-    }
-
-    private fun mergeAndBorderCells(range: CellRangeAddress) {
-        sheet.addMergedRegion(range)
-
-        RegionUtil.setBorderTop(BORDER_STYLE, range, sheet)
-        RegionUtil.setBorderLeft(BORDER_STYLE, range, sheet)
-        RegionUtil.setBorderRight(BORDER_STYLE, range, sheet)
-        RegionUtil.setBorderBottom(BORDER_STYLE, range, sheet)
-    }
-
     private fun populateSheet(plays: List<Play>) {
 
         // populate header rows
-        populateTopHeaderRow()
-        populateBottomHeaderRow()
+        populateHeaderRow(ROW_IDX_TOP_HEADER, topHeaderColumnNames, _styleManager.buildPrimaryHeaderStyle())
+        populateHeaderRow(ROW_IDX_BOTTOM_HEADER, bottomHeaderColumnNames, _styleManager.buildSecondaryHeaderStyle())
 
         // populate data rows
         var rowIdx = ROW_IDX_FIRST_DATA_ROW
@@ -78,30 +51,6 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
 
         // add filters
         sheet.setAutoFilter(RANGE_FILTERS)
-    }
-
-    private fun populateTopHeaderRow() {
-        val headerRow = sheet.createRow(ROW_IDX_TOP_HEADER)
-        val cellBuilder = CellBuilder(headerRow)
-
-        PlaysColumns.values().forEach { column ->
-            _styleManager
-                .applyPrimaryHeaderStyle(cellBuilder)
-                .columnIdx(column.idx())
-                .build(topHeaderColumnNames[column])
-        }
-    }
-
-    private fun populateBottomHeaderRow() {
-        val headerRow = sheet.createRow(ROW_IDX_BOTTOM_HEADER)
-        val cellBuilder = CellBuilder(headerRow)
-
-        PlaysColumns.values().forEach { column ->
-            _styleManager
-                .applySecondaryHeaderStyle(cellBuilder)
-                .columnIdx(column.idx())
-                .build(bottomHeaderColumnNames[column])
-        }
     }
 
     private fun populateDataRow(rowIdx: Int, play: Play) {
@@ -121,7 +70,7 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
             with(cellBuilder) {
                 _styleManager
                     .applyStyle(column, players, winner, cellBuilder)
-                    .columnIdx(column.idx())
+                    .columnIdx(column.ordinal)
 
                 when (column) {
                     TIMESTAMP       -> build(timestamp)
@@ -157,6 +106,17 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
         }
     }
 
+    private fun mergeAndBorderHeaderCells() {
+        mergeAndBorderCells(RANGE_TIMESTAMP, BORDER_STYLE)
+        mergeAndBorderCells(RANGE_BOARD, BORDER_STYLE)
+        mergeAndBorderCells(RANGE_GENERATIONS, BORDER_STYLE)
+        mergeAndBorderCells(RANGE_PLAYER_1, BORDER_STYLE)
+        mergeAndBorderCells(RANGE_PLAYER_2, BORDER_STYLE)
+        mergeAndBorderCells(RANGE_PLAYER_3, BORDER_STYLE)
+        mergeAndBorderCells(RANGE_PLAYER_4, BORDER_STYLE)
+        mergeAndBorderCells(RANGE_PLAYER_5, BORDER_STYLE)
+    }
+
 
     // companion
     companion object {
@@ -185,11 +145,7 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
             PLAYER_5_NAME,
             PLAYER_5_CORP,
             PLAYER_5_SCORE,
-            PLAYER_5_ELO;
-
-            fun idx(): Int {
-                return ordinal
-            }
+            PLAYER_5_ELO
         }
 
         // header column names
@@ -283,15 +239,15 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
         const val ROW_IDX_FIRST_DATA_ROW = 2
 
         // cell range addresses (for merged regions and auto-filters)
-        val RANGE_TIMESTAMP = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, TIMESTAMP.idx(), TIMESTAMP.idx())
-        val RANGE_BOARD = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, BOARD.idx(), BOARD.idx())
-        val RANGE_GENERATIONS = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, GENERATIONS.idx(), GENERATIONS.idx())
-        val RANGE_PLAYER_1 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_1_NAME.idx(), PLAYER_1_ELO.idx())
-        val RANGE_PLAYER_2 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_2_NAME.idx(), PLAYER_2_ELO.idx())
-        val RANGE_PLAYER_3 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_3_NAME.idx(), PLAYER_3_ELO.idx())
-        val RANGE_PLAYER_4 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_4_NAME.idx(), PLAYER_4_ELO.idx())
-        val RANGE_PLAYER_5 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_5_NAME.idx(), PLAYER_5_ELO.idx())
-        val RANGE_FILTERS = CellRangeAddress(ROW_IDX_BOTTOM_HEADER, ROW_IDX_BOTTOM_HEADER, TIMESTAMP.idx(), PLAYER_5_ELO.idx())
+        val RANGE_TIMESTAMP = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, TIMESTAMP.ordinal, TIMESTAMP.ordinal)
+        val RANGE_BOARD = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, BOARD.ordinal, BOARD.ordinal)
+        val RANGE_GENERATIONS = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, GENERATIONS.ordinal, GENERATIONS.ordinal)
+        val RANGE_PLAYER_1 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_1_NAME.ordinal, PLAYER_1_ELO.ordinal)
+        val RANGE_PLAYER_2 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_2_NAME.ordinal, PLAYER_2_ELO.ordinal)
+        val RANGE_PLAYER_3 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_3_NAME.ordinal, PLAYER_3_ELO.ordinal)
+        val RANGE_PLAYER_4 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_4_NAME.ordinal, PLAYER_4_ELO.ordinal)
+        val RANGE_PLAYER_5 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_5_NAME.ordinal, PLAYER_5_ELO.ordinal)
+        val RANGE_FILTERS = CellRangeAddress(ROW_IDX_BOTTOM_HEADER, ROW_IDX_BOTTOM_HEADER, TIMESTAMP.ordinal, PLAYER_5_ELO.ordinal)
 
         // border style
         val BORDER_STYLE = BorderStyle.THIN

@@ -2,8 +2,8 @@ package de.kayteem.apps.tfmgamelogconverter.controller.export.common
 
 import de.kayteem.apps.tfmgamelogconverter.controller.converters.PlaysToCorporationsConverter
 import de.kayteem.apps.tfmgamelogconverter.controller.converters.PlaysToUsernameConverter
-import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.CorpsSheetFactory
-import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.PlaysSheetFactory
+import de.kayteem.apps.tfmgamelogconverter.controller.export.sheetFactories.CorpsSheetFactory
+import de.kayteem.apps.tfmgamelogconverter.controller.export.sheetFactories.PlaysSheetFactory
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Play
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.FileOutputStream

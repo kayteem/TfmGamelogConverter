@@ -7,6 +7,7 @@ import de.kayteem.apps.tfmgamelogconverter.model.internal.Player
 import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+
 /**
  * Creates and manages cell styles for the "Plays" sheet.
  *
@@ -18,8 +19,8 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
     fun applyStyle(column: PlaysColumns, players: List<Player>, winner: Player?, cellBuilder: CellBuilder): CellBuilder {
         return when(column) {
             TIMESTAMP       -> applyTimestampStyle(cellBuilder)
-            BOARD           -> applySecondaryHeaderStyle(cellBuilder)
-            GENERATIONS     -> applySecondaryHeaderStyle(cellBuilder)
+            BOARD           -> applyBoardStyle(cellBuilder)
+            GENERATIONS     -> applyGenerationsStyle(cellBuilder)
 
             PLAYER_1_NAME   -> applyPlayerNameStyle(players.getOrNull(0), winner, false, cellBuilder)
             PLAYER_1_CORP   -> applyCorpStyle(false, cellBuilder)
@@ -48,32 +49,6 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
         }
     }
 
-    fun applyPrimaryHeaderStyle(cellBuilder: CellBuilder): CellBuilder {
-        val style = cellStyleBuilder
-            .fontSize(12)
-            .bold(true)
-            .stringFormat()
-            .textColor(IndexedColors.BLACK)
-            .cellForegroundColor(IndexedColors.LIGHT_GREEN)
-            .cellPattern(FillPatternType.SOLID_FOREGROUND)
-            .build()
-
-        return cellBuilder.cellStyle(style)
-    }
-
-    fun applySecondaryHeaderStyle(cellBuilder: CellBuilder): CellBuilder {
-        val style = cellStyleBuilder
-            .fontSize(10)
-            .bold(false)
-            .stringFormat()
-            .textColor(IndexedColors.BLACK)
-            .cellForegroundColor(IndexedColors.LIGHT_GREEN)
-            .cellPattern(FillPatternType.SOLID_FOREGROUND)
-            .build()
-
-        return cellBuilder.cellStyle(style)
-    }
-
 
     // helpers
     private fun applyTimestampStyle(cellBuilder: CellBuilder): CellBuilder {
@@ -81,6 +56,23 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
             .fontSize(10)
             .bold(false)
             .dateFormat()
+            .textColor(IndexedColors.BLACK)
+            .cellForegroundColor(IndexedColors.LIGHT_GREEN)
+            .cellPattern(FillPatternType.SOLID_FOREGROUND)
+            .build()
+
+        return cellBuilder.cellStyle(style)
+    }
+
+    private fun applyBoardStyle(cellBuilder: CellBuilder): CellBuilder {
+        return cellBuilder.cellStyle(buildSecondaryHeaderStyle())
+    }
+
+    private fun applyGenerationsStyle(cellBuilder: CellBuilder): CellBuilder {
+        val style = cellStyleBuilder
+            .fontSize(10)
+            .bold(false)
+            .intFormat()
             .textColor(IndexedColors.BLACK)
             .cellForegroundColor(IndexedColors.LIGHT_GREEN)
             .cellPattern(FillPatternType.SOLID_FOREGROUND)
@@ -164,4 +156,3 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
     }
 
 }
-

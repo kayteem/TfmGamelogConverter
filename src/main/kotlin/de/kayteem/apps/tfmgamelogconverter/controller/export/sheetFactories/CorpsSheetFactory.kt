@@ -1,13 +1,12 @@
-package de.kayteem.apps.tfmgamelogconverter.controller.export.sheets
+package de.kayteem.apps.tfmgamelogconverter.controller.export.sheetFactories
 
 import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellBuilder
-import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.CorpsSheetFactory.Companion.CorpsColumns.*
-import de.kayteem.apps.tfmgamelogconverter.controller.export.style.CorpsStyleManager
+import de.kayteem.apps.tfmgamelogconverter.controller.export.sheetFactories.CorpsSheetFactory.Companion.CorpsColumns.*
+import de.kayteem.apps.tfmgamelogconverter.controller.export.styleManagers.CorpsStyleManager
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Boards
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Corporation
 import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.util.CellRangeAddress
-import org.apache.poi.ss.util.RegionUtil
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
@@ -27,7 +26,7 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
         sheet = workbook.createSheet("Corps")
         _styleManager = CorpsStyleManager(workbook)
 
-        setColumnsWidths()
+        setColumnsWidths(columnWidths)
         populateSheet(corps)
         mergeAndBorderHeaderCells()
 
@@ -36,32 +35,11 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
 
 
     // helpers
-    private fun setColumnsWidths() {
-        CorpsColumns.values().forEach { column ->
-            sheet.setColumnWidth(column.idx(), columnWidths[column]!!)
-        }
-    }
-
-    private fun mergeAndBorderHeaderCells() {
-        mergeAndBorderCells(RANGE_CORPORATION)
-        mergeAndBorderCells(RANGE_BOARD)
-        mergeAndBorderCells(RANGE_PLAYED)
-    }
-
-    private fun mergeAndBorderCells(range: CellRangeAddress) {
-        sheet.addMergedRegion(range)
-
-        RegionUtil.setBorderTop(BORDER_STYLE, range, sheet)
-        RegionUtil.setBorderLeft(BORDER_STYLE, range, sheet)
-        RegionUtil.setBorderRight(BORDER_STYLE, range, sheet)
-        RegionUtil.setBorderBottom(BORDER_STYLE, range, sheet)
-    }
-
     private fun populateSheet(corps: List<Corporation>) {
 
         // populate header rows
-        populateTopHeaderRow()
-        populateBottomHeaderRow()
+        populateHeaderRow(ROW_IDX_TOP_HEADER, topHeaderColumnNames, _styleManager.buildPrimaryHeaderStyle())
+        populateHeaderRow(ROW_IDX_BOTTOM_HEADER, bottomHeaderColumnNames, _styleManager.buildSecondaryHeaderStyle())
 
         // populate data rows
         var rowIdx = ROW_IDX_FIRST_DATA_ROW
@@ -80,30 +58,6 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
 
         // add filters
         sheet.setAutoFilter(RANGE_FILTERS)
-    }
-
-    private fun populateTopHeaderRow() {
-        val headerRow = sheet.createRow(ROW_IDX_TOP_HEADER)
-        val cellBuilder = CellBuilder(headerRow)
-
-        CorpsColumns.values().forEach { column ->
-            _styleManager
-                .applyPrimaryHeaderStyle(cellBuilder)
-                .columnIdx(column.idx())
-                .build(topHeaderColumnNames[column])
-        }
-    }
-
-    private fun populateBottomHeaderRow() {
-        val headerRow = sheet.createRow(ROW_IDX_BOTTOM_HEADER)
-        val cellBuilder = CellBuilder(headerRow)
-
-        CorpsColumns.values().forEach { column ->
-            _styleManager
-                .applySecondaryHeaderStyle(cellBuilder)
-                .columnIdx(column.idx())
-                .build(bottomHeaderColumnNames[column])
-        }
     }
 
     private fun populateDataRow(rowIdx: Int, corp: Corporation, board: Boards? = null) {
@@ -129,7 +83,7 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
             with(cellBuilder) {
                 _styleManager
                     .applyStyle(column, cellBuilder)
-                    .columnIdx(column.idx())
+                    .columnIdx(column.ordinal)
 
                 when (column) {
                     CORPORATION         -> build(corpName)
@@ -143,6 +97,12 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
         }
     }
 
+    private fun mergeAndBorderHeaderCells() {
+        mergeAndBorderCells(RANGE_CORPORATION, BORDER_STYLE)
+        mergeAndBorderCells(RANGE_BOARD, BORDER_STYLE)
+        mergeAndBorderCells(RANGE_PLAYED, BORDER_STYLE)
+    }
+
 
     // companion
     companion object {
@@ -153,11 +113,7 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
             BOARD,
             PLAYED_BY_YOU,
             PLAYED_BY_OPPONENTS,
-            PLAYED_TOTAL;
-
-            fun idx(): Int {
-                return ordinal
-            }
+            PLAYED_TOTAL,
         }
 
         // header column names
@@ -204,10 +160,10 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
         const val ROW_IDX_FIRST_DATA_ROW = 2
 
         // cell range addresses (for merged regions and auto-filters)
-        val RANGE_CORPORATION = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, CORPORATION.idx(), CORPORATION.idx())
-        val RANGE_BOARD = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, BOARD.idx(), BOARD.idx())
-        val RANGE_PLAYED = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYED_BY_YOU.idx(), PLAYED_TOTAL.idx())
-        val RANGE_FILTERS = CellRangeAddress(ROW_IDX_BOTTOM_HEADER, ROW_IDX_BOTTOM_HEADER, CORPORATION.idx(), PLAYED_TOTAL.idx())
+        val RANGE_CORPORATION = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, CORPORATION.ordinal, CORPORATION.ordinal)
+        val RANGE_BOARD = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, BOARD.ordinal, BOARD.ordinal)
+        val RANGE_PLAYED = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYED_BY_YOU.ordinal, PLAYED_TOTAL.ordinal)
+        val RANGE_FILTERS = CellRangeAddress(ROW_IDX_BOTTOM_HEADER, ROW_IDX_BOTTOM_HEADER, CORPORATION.ordinal, PLAYED_TOTAL.ordinal)
 
         // border style
         val BORDER_STYLE = BorderStyle.THIN
