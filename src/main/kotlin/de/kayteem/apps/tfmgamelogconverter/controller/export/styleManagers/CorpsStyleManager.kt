@@ -17,13 +17,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 class CorpsStyleManager(workbook: XSSFWorkbook) : AbstractStyleManager(workbook) {
 
     // interface
-    fun applyStyle(column: CorpsColumns, cellBuilder: CellBuilder): CellBuilder {
+    fun applyStyle(column: CorpsColumns, boldRow: Boolean, cellBuilder: CellBuilder): CellBuilder {
         return when(column) {
             CORPORATION         -> applyCorporationStyle(cellBuilder)
             BOARD               -> applyBoardStyle(cellBuilder)
 
-            PLAYED_BY_YOU       -> applyPlayedStyle(false, cellBuilder)
-            PLAYED_BY_OPPONENTS -> applyPlayedStyle(false, cellBuilder)
+            PLAYED_BY_YOU       -> applyPlayedStyle(boldRow, false, cellBuilder)
+            PLAYED_BY_OPPONENTS -> applyPlayedStyle(boldRow, false, cellBuilder)
             PLAYED_TOTAL        -> applyPlayedTotalStyle(false, cellBuilder)
         }
     }
@@ -56,10 +56,10 @@ class CorpsStyleManager(workbook: XSSFWorkbook) : AbstractStyleManager(workbook)
         return cellBuilder.cellStyle(style)
     }
 
-    private fun applyPlayedStyle(shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
+    private fun applyPlayedStyle(bold: Boolean, shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
         val style = cellStyleBuilder
             .fontSize(10)
-            .bold(false)
+            .bold(bold)
             .intFormat()
             .textColor(IndexedColors.BLACK)
             .cellForegroundColor(getBgColor(shadowed))

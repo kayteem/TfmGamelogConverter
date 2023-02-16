@@ -21,7 +21,10 @@ class PlaysToCorporationsConverter(private val username: String) : Converter<Lis
     override fun process(input: List<Play>): List<Corporation> {
         input.forEach { processPlay(it) }
 
-        return corporations.values.toList()
+        return corporations
+            .values
+            .sortedBy { it.name }
+            .toList()
     }
 
     

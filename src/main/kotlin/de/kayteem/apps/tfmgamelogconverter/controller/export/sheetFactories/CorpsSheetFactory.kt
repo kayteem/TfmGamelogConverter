@@ -66,6 +66,7 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
 
         val corpName = corp.name
         val boardName = board?.mapName ?: "Total"
+        val boldRow = board == null
 
         val playedByYou: Int =
             if (board != null) corp.playedOnMapByYou.getOrDefault(board, 0)
@@ -82,7 +83,7 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
         CorpsColumns.values().forEach { column ->
             with(cellBuilder) {
                 _styleManager
-                    .applyStyle(column, cellBuilder)
+                    .applyStyle(column, boldRow, cellBuilder)
                     .columnIdx(column.ordinal)
 
                 when (column) {
