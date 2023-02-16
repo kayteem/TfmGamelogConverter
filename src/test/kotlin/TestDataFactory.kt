@@ -63,7 +63,7 @@ object TestDataFactory {
         )
     }
 
-    private fun buildPlayer1Game1(): Player {
+    fun buildPlayer1Game1(): Player {
         val logPlayer1 = buildLogPlayer1Game1()
 
         return Player(
@@ -74,7 +74,7 @@ object TestDataFactory {
         )
     }
 
-    private fun buildPlayer2Game1(): Player {
+    fun buildPlayer2Game1(): Player {
         val logPlayer2 = buildLogPlayer2Game1()
 
         return Player(
@@ -150,7 +150,7 @@ object TestDataFactory {
         )
     }
 
-    private fun buildPlayer1Game2(): Player {
+    fun buildPlayer1Game2(): Player {
         val logPlayer1 = buildLogPlayer1Game2()
 
         return Player(
@@ -161,7 +161,7 @@ object TestDataFactory {
         )
     }
 
-    private fun buildPlayer2Game2(): Player {
+    fun buildPlayer2Game2(): Player {
         val logPlayer2 = buildLogPlayer2Game2()
 
         return Player(
@@ -252,7 +252,7 @@ object TestDataFactory {
         )
     }
 
-    private fun buildPlayer1Game3(): Player {
+    fun buildPlayer1Game3(): Player {
         val logPlayer1 = buildLogPlayer1Game3()
 
         return Player(
@@ -263,7 +263,7 @@ object TestDataFactory {
         )
     }
 
-    private fun buildPlayer2Game3(): Player {
+    fun buildPlayer2Game3(): Player {
         val logPlayer2 = buildLogPlayer2Game3()
 
         return Player(
@@ -274,7 +274,7 @@ object TestDataFactory {
         )
     }
 
-    private fun buildPlayer3Game3(): Player {
+    fun buildPlayer3Game3(): Player {
         val logPlayer3 = buildLogPlayer3Game3()
 
         return Player(

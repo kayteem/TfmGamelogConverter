@@ -30,23 +30,40 @@ class PlaysToCorporationsConverter(private val username: String) : Converter<Lis
     
     // helpers
     private fun processPlay(play: Play) {
+        val winner = play.winner()
         val board = Boards.fromName(play.board)
 
-        play.players.forEach { processPlayer(it, board) }
+        play.players.forEach { processPlayer(it, winner, board) }
     }
 
-    private fun processPlayer(player: Player, board: Boards) {
+    private fun processPlayer(player: Player, winner: Player?, board: Boards) {
         val corpName = player.corporation
         val corporation = corporations.getOrPut(corpName) { Corporation(corpName) }
-
         val isUser = player.name == username
 
-        if (isUser) {
-            corporation.playedOnMapByYou[board] = corporation.playedOnMapByYou.getOrDefault(board, 0) + 1
+        with(corporation) {
+            // count plays and wins of user
+            if (isUser) {
+                incMapEntry(playedOnMapByYou, board)
+
+                if (player == winner) {
+                    incMapEntry(wonOnMapByYou, board)
+                }
+            }
+
+            // count plays and wins of opponents
+            else {
+                incMapEntry(playedOnMapByOpponents, board)
+
+                if (player == winner) {
+                    incMapEntry(wonOnMapByOpponents, board)
+                }
+            }
         }
-        else {
-            corporation.playedOnMapByOpponents[board] = corporation.playedOnMapByOpponents.getOrDefault(board, 0) + 1
-        }
+    }
+
+    private fun incMapEntry(map: MutableMap<Boards, Int>, board: Boards) {
+        map[board] = map.getOrDefault(board, 0) + 1
     }
 
 }

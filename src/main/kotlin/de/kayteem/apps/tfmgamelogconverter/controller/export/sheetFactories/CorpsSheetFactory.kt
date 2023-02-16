@@ -77,16 +77,26 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
             else corp.playedByOpponents()
 
         val playedTotal: Int =
-            if (board != null) corp.playedOnMapTotal().getOrDefault(board, 0)
+            if (board != null) corp.playedOnMap().getOrDefault(board, 0)
             else corp.playedTotal()
 
-        val wonByYou: Int = 10
-        val wonByOpponents: Int = 20
-        val wonTotal: Int = 30
 
-        val winRateYou: Int = 40
-        val winRateOpponents: Int = 50
-        val winRateTotal: Int = 60
+        val wonByYou: Int =
+            if (board != null) corp.wonOnMapByYou.getOrDefault(board, 0)
+            else corp.wonByYou()
+
+        val wonByOpponents: Int =
+            if (board != null) corp.wonOnMapByOpponents.getOrDefault(board, 0)
+            else corp.wonByOpponents()
+
+        val wonTotal: Int =
+            if (board != null) corp.wonOnMap().getOrDefault(board, 0)
+            else corp.wonTotal()
+
+
+        val winRateYou: Int = 0
+        val winRateOpponents: Int = 0
+        val winRateTotal: Int = 0
 
         CorpsColumns.values().forEach { column ->
             with(cellBuilder) {
