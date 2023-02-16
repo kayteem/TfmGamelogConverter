@@ -12,19 +12,19 @@ import kotlin.math.roundToInt
  */
 object TestDataFactory {
 
-    // play 1
+    // play 1 - KayTeEm (Thorgate, 102) vs. TestDummy (UNMI, 98)
     fun buildLogPlayer1Game1(): LogPlayer {
         return LogPlayer(
             name = "KayTeEm",
             color = "Green",
             corporation = "Thorgate",
-            elo = 1601.0216806701019
+            elo = 1601.021680670102
         )
     }
 
     fun buildLogPlayer2Game1(): LogPlayer {
         return LogPlayer(
-            name = "Player2",
+            name = "TestDummy",
             color = "Blue",
             corporation = "UNMI",
             elo = 1617.7076549970068
@@ -63,7 +63,7 @@ object TestDataFactory {
         )
     }
 
-    fun buildPlayer1Game1(): Player {
+    private fun buildPlayer1Game1(): Player {
         val logPlayer1 = buildLogPlayer1Game1()
 
         return Player(
@@ -74,7 +74,7 @@ object TestDataFactory {
         )
     }
 
-    fun buildPlayer2Game1(): Player {
+    private fun buildPlayer2Game1(): Player {
         val logPlayer2 = buildLogPlayer2Game1()
 
         return Player(
@@ -99,7 +99,7 @@ object TestDataFactory {
     }
 
 
-    // play 2
+    // play 2 - KayTeEm (InterplanetaryCinematics, 130) vs. TestDummy (Inventrix, 69)
     fun buildLogPlayer1Game2(): LogPlayer {
         return LogPlayer(
             name = "KayTeEm",
@@ -111,7 +111,7 @@ object TestDataFactory {
 
     fun buildLogPlayer2Game2(): LogPlayer {
         return LogPlayer(
-            name = "Player2",
+            name = "TestDummy",
             color = "Blue",
             corporation = "Inventrix",
             elo = 1696.4541812619316
@@ -150,7 +150,7 @@ object TestDataFactory {
         )
     }
 
-    fun buildPlayer1Game2(): Player {
+    private fun buildPlayer1Game2(): Player {
         val logPlayer1 = buildLogPlayer1Game2()
 
         return Player(
@@ -161,7 +161,7 @@ object TestDataFactory {
         )
     }
 
-    fun buildPlayer2Game2(): Player {
+    private fun buildPlayer2Game2(): Player {
         val logPlayer2 = buildLogPlayer2Game2()
 
         return Player(
@@ -186,43 +186,225 @@ object TestDataFactory {
     }
 
 
+    // play 3 - Champion (MiningGuild, 78) vs. KayTeEm (PhoboLob, 67) vs. TestDummy (InterplanetaryCinematics, 67)
+    fun buildLogPlayer1Game3(): LogPlayer {
+        return LogPlayer(
+            name = "Champion",
+            color = "Green",
+            corporation = "MiningGuild",
+            elo = 1728.1534083286826
+        )
+    }
+
+    fun buildLogPlayer2Game3(): LogPlayer {
+        return LogPlayer(
+            name = "KayTeEm",
+            color = "Blue",
+            corporation = "PhoboLob",
+            elo = 1648.435568640261
+        )
+    }
+
+    fun buildLogPlayer3Game3(): LogPlayer {
+        return LogPlayer(
+            name = "TestDummy",
+            color = "Red",
+            corporation = "InterplanetaryCinematics",
+            elo = 1532.5213270800932
+        )
+    }
+
+    fun buildGenerationsGame3(): Int = 9
+
+    fun buildScore1Game3(): Int = 78
+
+    fun buildScore2Game3(): Int = 67
+
+    fun buildScore3Game3(): Int = 67
+
+    fun buildGameLog3(): GameLog {
+        return GameLog(
+            board = "Elysium",
+            isRanked = false,
+            isOnline = true,
+            start = "2023-01-16T21:54:09.028Z",
+            players = Players(
+                player1 = buildLogPlayer1Game3(),
+                player2 = buildLogPlayer2Game3(),
+                player3 = buildLogPlayer3Game3()
+            ),
+            turns = listOf(
+                Turn(
+                    generation = buildGenerationsGame3(),
+                    playerInfos = PlayerInfos(
+                        playerInfo1 = PlayerInfo(
+                            score = Score(buildScore1Game3())
+                        ),
+                        playerInfo2 = PlayerInfo(
+                            score = Score(buildScore2Game3())
+                        ),
+                        playerInfo3 = PlayerInfo(
+                            score = Score(buildScore3Game3())
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    private fun buildPlayer1Game3(): Player {
+        val logPlayer1 = buildLogPlayer1Game3()
+
+        return Player(
+            name = logPlayer1.name,
+            corporation = logPlayer1.corporation,
+            elo = logPlayer1.elo.roundToInt(),
+            finalScore = buildScore1Game3()
+        )
+    }
+
+    private fun buildPlayer2Game3(): Player {
+        val logPlayer2 = buildLogPlayer2Game3()
+
+        return Player(
+            name = logPlayer2.name,
+            corporation = logPlayer2.corporation,
+            elo = logPlayer2.elo.roundToInt(),
+            finalScore = buildScore2Game3()
+        )
+    }
+
+    private fun buildPlayer3Game3(): Player {
+        val logPlayer3 = buildLogPlayer3Game3()
+
+        return Player(
+            name = logPlayer3.name,
+            corporation = logPlayer3.corporation,
+            elo = logPlayer3.elo.roundToInt(),
+            finalScore = buildScore3Game3()
+        )
+    }
+
+    fun buildPlay3(): Play {
+        val gameLog3 = buildGameLog3()
+        val player1Game3 = buildPlayer1Game3()
+        val player2Game3 = buildPlayer2Game3()
+        val player3Game3 = buildPlayer3Game3()
+
+        return Play(
+            timestamp = gameLog3.start,
+            board = gameLog3.board,
+            generations = gameLog3.generations(),
+            players = listOf(player1Game3, player2Game3, player3Game3)
+        )
+    }
+
+
     // corps
     fun buildCorp1(): Corporation {
         return Corporation(
-            name = "Thorgate",
+            name = "InterplanetaryCinematics",
             playedOnMapByYou = mutableMapOf(
                 Boards.THARSIS to 1
             ),
-            playedOnMapByOpponents = mutableMapOf()
+            playedOnMapByOpponents = mutableMapOf(
+                Boards.ELYSIUM to 1
+            ),
+            wonOnMapByYou = mutableMapOf(
+                Boards.THARSIS to 1
+            ),
+            wonOnMapByOpponents = mutableMapOf(
+
+            )
         )
     }
 
     fun buildCorp2(): Corporation {
         return Corporation(
-            name = "UNMI",
-            playedOnMapByYou = mutableMapOf(),
+            name = "Inventrix",
+            playedOnMapByYou = mutableMapOf(
+
+            ),
             playedOnMapByOpponents = mutableMapOf(
                 Boards.THARSIS to 1
+            ),
+            wonOnMapByYou = mutableMapOf(
+
+            ),
+            wonOnMapByOpponents = mutableMapOf(
+
             )
         )
     }
 
     fun buildCorp3(): Corporation {
         return Corporation(
-            name = "InterplanetaryCinematics",
+            name = "MiningGuild",
             playedOnMapByYou = mutableMapOf(
-                Boards.THARSIS to 1
+
             ),
-            playedOnMapByOpponents = mutableMapOf()
+            playedOnMapByOpponents = mutableMapOf(
+                Boards.ELYSIUM to 1
+            ),
+            wonOnMapByYou = mutableMapOf(
+
+            ),
+            wonOnMapByOpponents = mutableMapOf(
+                Boards.ELYSIUM to 1
+            )
         )
     }
 
     fun buildCorp4(): Corporation {
         return Corporation(
-            name = "Inventrix",
-            playedOnMapByYou = mutableMapOf(),
+            name = "PhoboLob",
+            playedOnMapByYou = mutableMapOf(
+                Boards.ELYSIUM to 1
+            ),
+            playedOnMapByOpponents = mutableMapOf(
+
+            ),
+            wonOnMapByYou = mutableMapOf(
+
+            ),
+            wonOnMapByOpponents = mutableMapOf(
+
+            )
+        )
+    }
+
+    fun buildCorp5(): Corporation {
+        return Corporation(
+            name = "Thorgate",
+            playedOnMapByYou = mutableMapOf(
+                Boards.THARSIS to 1
+            ),
+            playedOnMapByOpponents = mutableMapOf(
+
+            ),
+            wonOnMapByYou = mutableMapOf(
+                Boards.THARSIS to 1
+            ),
+            wonOnMapByOpponents = mutableMapOf(
+
+            )
+        )
+    }
+
+    fun buildCorp6(): Corporation {
+        return Corporation(
+            name = "UNMI",
+            playedOnMapByYou = mutableMapOf(
+
+            ),
             playedOnMapByOpponents = mutableMapOf(
                 Boards.THARSIS to 1
+            ),
+            wonOnMapByYou = mutableMapOf(
+
+            ),
+            wonOnMapByOpponents = mutableMapOf(
+
             )
         )
     }

@@ -23,7 +23,7 @@ class AnExcelExporter {
     fun canExportGameLogsToExcel() {
 
         // setup
-        val plays = listOf(PLAY_1, PLAY_2)
+        val plays = listOf(PLAY_1, PLAY_2, PLAY_3)
         exporter = ExcelExporter(PATH_EXCEL)
 
         // execution
@@ -44,6 +44,7 @@ class AnExcelExporter {
         // plays
         val PLAY_1 = TestDataFactory.buildPlay1()
         val PLAY_2 = TestDataFactory.buildPlay2()
+        val PLAY_3 = TestDataFactory.buildPlay3()
     }
 
 }

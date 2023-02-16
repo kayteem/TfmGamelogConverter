@@ -23,7 +23,7 @@ class APlaysToUsernameConverter {
         converter = PlaysToUsernameConverter()
 
         // execution
-        val username = converter.process(listOf(PLAY_1, PLAY_2))
+        val username = converter.process(listOf(PLAY_1, PLAY_2, PLAY_3))
 
         // post-condition
         Assert.assertEquals(EXPECTED_USERNAME, username)
@@ -34,6 +34,7 @@ class APlaysToUsernameConverter {
     companion object {
         val PLAY_1 = TestDataFactory.buildPlay1()
         val PLAY_2 = TestDataFactory.buildPlay2()
+        val PLAY_3 = TestDataFactory.buildPlay3()
 
         const val EXPECTED_USERNAME = "KayTeEm"
     }
