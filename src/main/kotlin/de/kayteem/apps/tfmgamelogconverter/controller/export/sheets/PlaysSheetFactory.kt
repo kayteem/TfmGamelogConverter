@@ -17,30 +17,29 @@ import java.time.format.DateTimeFormatter
  *
  * Author: Tobias Mielke
  */
-class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username: String) {
+class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username: String) : AbstractSheetFactory() {
 
     // members
-    private lateinit var _sheet: XSSFSheet
     private lateinit var _styleManager: PlaysStyleManager
 
     
     // interface
     fun create(plays: List<Play>): XSSFSheet {
-        _sheet = workbook.createSheet("Plays")
+        sheet = workbook.createSheet("Plays")
         _styleManager = PlaysStyleManager(workbook, username)
 
         setColumnsWidths()
         populateSheet(plays)
         mergeAndBorderHeaderCells()
 
-        return _sheet
+        return sheet
     }
 
 
     // helpers
     private fun setColumnsWidths() {
         PlaysColumns.values().forEach { column ->
-            _sheet.setColumnWidth(column.idx(), columnWidths[column]!!)
+            sheet.setColumnWidth(column.idx(), columnWidths[column]!!)
         }
     }
 
@@ -56,12 +55,12 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
     }
 
     private fun mergeAndBorderCells(range: CellRangeAddress) {
-        _sheet.addMergedRegion(range)
+        sheet.addMergedRegion(range)
 
-        RegionUtil.setBorderTop(BORDER_STYLE, range, _sheet)
-        RegionUtil.setBorderLeft(BORDER_STYLE, range, _sheet)
-        RegionUtil.setBorderRight(BORDER_STYLE, range, _sheet)
-        RegionUtil.setBorderBottom(BORDER_STYLE, range, _sheet)
+        RegionUtil.setBorderTop(BORDER_STYLE, range, sheet)
+        RegionUtil.setBorderLeft(BORDER_STYLE, range, sheet)
+        RegionUtil.setBorderRight(BORDER_STYLE, range, sheet)
+        RegionUtil.setBorderBottom(BORDER_STYLE, range, sheet)
     }
 
     private fun populateSheet(plays: List<Play>) {
@@ -71,18 +70,18 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
         populateBottomHeaderRow()
 
         // populate data rows
-        var firstDataRowIdx = ROW_IDX_FIRST_DATA_ROW
+        var rowIdx = ROW_IDX_FIRST_DATA_ROW
         plays.forEach { play ->
-            populateDataRow(firstDataRowIdx, play)
-            firstDataRowIdx++
+            populateDataRow(rowIdx, play)
+            rowIdx++
         }
 
         // add filters
-        _sheet.setAutoFilter(RANGE_FILTERS)
+        sheet.setAutoFilter(RANGE_FILTERS)
     }
 
     private fun populateTopHeaderRow() {
-        val headerRow = _sheet.createRow(ROW_IDX_TOP_HEADER)
+        val headerRow = sheet.createRow(ROW_IDX_TOP_HEADER)
         val cellBuilder = CellBuilder(headerRow)
 
         PlaysColumns.values().forEach { column ->
@@ -94,7 +93,7 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
     }
 
     private fun populateBottomHeaderRow() {
-        val headerRow = _sheet.createRow(ROW_IDX_BOTTOM_HEADER)
+        val headerRow = sheet.createRow(ROW_IDX_BOTTOM_HEADER)
         val cellBuilder = CellBuilder(headerRow)
 
         PlaysColumns.values().forEach { column ->
@@ -106,7 +105,7 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
     }
 
     private fun populateDataRow(rowIdx: Int, play: Play) {
-        val row = _sheet.createRow(rowIdx)
+        val row = sheet.createRow(rowIdx)
         val cellBuilder = CellBuilder(row)
 
         val timestamp = LocalDateTime.parse(play.timestamp, DateTimeFormatter.ISO_DATE_TIME)

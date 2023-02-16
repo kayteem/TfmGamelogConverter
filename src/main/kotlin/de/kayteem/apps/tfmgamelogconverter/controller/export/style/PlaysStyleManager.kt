@@ -8,7 +8,7 @@ import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 /**
- * Creates and manages cell styles for all sheets.
+ * Creates and manages cell styles for the "Plays" sheet.
  *
  * Author: Tobias Mielke
  */

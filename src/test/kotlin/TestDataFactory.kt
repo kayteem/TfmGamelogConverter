@@ -1,3 +1,5 @@
+import de.kayteem.apps.tfmgamelogconverter.model.internal.Boards
+import de.kayteem.apps.tfmgamelogconverter.model.internal.Corporation
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Play
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Player
 import de.kayteem.apps.tfmgamelogconverter.model.jsonImport.*
@@ -180,6 +182,48 @@ object TestDataFactory {
             board = gameLog2.board,
             generations = gameLog2.generations(),
             players = listOf(player1Game2, player2Game2)
+        )
+    }
+
+
+    // corps
+    fun buildCorp1(): Corporation {
+        return Corporation(
+            name = "Thorgate",
+            playedOnMapByYou = mutableMapOf(
+                Boards.THARSIS to 1
+            ),
+            playedOnMapByOpponents = mutableMapOf()
+        )
+    }
+
+    fun buildCorp2(): Corporation {
+        return Corporation(
+            name = "UNMI",
+            playedOnMapByYou = mutableMapOf(),
+            playedOnMapByOpponents = mutableMapOf(
+                Boards.THARSIS to 1
+            )
+        )
+    }
+
+    fun buildCorp3(): Corporation {
+        return Corporation(
+            name = "InterplanetaryCinematics",
+            playedOnMapByYou = mutableMapOf(
+                Boards.THARSIS to 1
+            ),
+            playedOnMapByOpponents = mutableMapOf()
+        )
+    }
+
+    fun buildCorp4(): Corporation {
+        return Corporation(
+            name = "Inventrix",
+            playedOnMapByYou = mutableMapOf(),
+            playedOnMapByOpponents = mutableMapOf(
+                Boards.THARSIS to 1
+            )
         )
     }
 

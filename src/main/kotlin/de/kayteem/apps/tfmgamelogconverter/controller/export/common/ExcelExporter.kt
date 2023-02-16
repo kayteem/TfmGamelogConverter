@@ -1,6 +1,8 @@
 package de.kayteem.apps.tfmgamelogconverter.controller.export.common
 
+import de.kayteem.apps.tfmgamelogconverter.controller.converters.PlaysToCorporationsConverter
 import de.kayteem.apps.tfmgamelogconverter.controller.converters.PlaysToUsernameConverter
+import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.CorpsSheetFactory
 import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.PlaysSheetFactory
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Play
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
@@ -20,15 +22,17 @@ class ExcelExporter(private val path: Path) {
 
     fun export(plays: List<Play>) {
 
-        // determine username
-        val username = PlaysToUsernameConverter().process(plays)
-
         // build workbook
         val workbook = XSSFWorkbook()
 
+        // determine entities
+        val username = PlaysToUsernameConverter().process(plays)
+        val corporations = PlaysToCorporationsConverter(username).process(plays)
+
         // build sheets
         PlaysSheetFactory(workbook, username).create(plays)
-        
+        CorpsSheetFactory(workbook).create(corporations)
+
         // write to Excel file
         val fos = FileOutputStream(path.toFile())
         workbook.write(fos)
