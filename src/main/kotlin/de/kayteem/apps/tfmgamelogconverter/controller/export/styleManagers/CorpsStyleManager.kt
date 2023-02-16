@@ -10,8 +10,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 /**
  * Creates and manages cell styles for the "Corps" sheet.
  *
- * TODO: use shadowing!
- *
  * Author: Tobias Mielke
  */
 class CorpsStyleManager(workbook: XSSFWorkbook) : AbstractStyleManager(workbook) {
@@ -25,6 +23,10 @@ class CorpsStyleManager(workbook: XSSFWorkbook) : AbstractStyleManager(workbook)
             PLAYED_BY_YOU       -> applyPlayedStyle(boldRow, false, cellBuilder)
             PLAYED_BY_OPPONENTS -> applyPlayedStyle(boldRow, false, cellBuilder)
             PLAYED_TOTAL        -> applyPlayedTotalStyle(false, cellBuilder)
+
+            WIN_RATE_YOU        -> applyPlayedStyle(boldRow, true, cellBuilder)
+            WIN_RATE_OPPONENTS  -> applyPlayedStyle(boldRow, true, cellBuilder)
+            WIN_RATE_TOTAL      -> applyPlayedTotalStyle(true, cellBuilder)
         }
     }
 
