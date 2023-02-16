@@ -1,8 +1,8 @@
-package de.kayteem.apps.tfmgamelogconverter.controller.export.style
+package de.kayteem.apps.tfmgamelogconverter.controller.export.styleManagers
 
 import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellBuilder
-import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.CorpsSheetFactory.Companion.CorpsColumns
-import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.CorpsSheetFactory.Companion.CorpsColumns.*
+import de.kayteem.apps.tfmgamelogconverter.controller.export.sheetFactories.CorpsSheetFactory.Companion.CorpsColumns
+import de.kayteem.apps.tfmgamelogconverter.controller.export.sheetFactories.CorpsSheetFactory.Companion.CorpsColumns.*
 import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
@@ -108,15 +108,6 @@ class CorpsStyleManager(workbook: XSSFWorkbook) : AbstractStyleManager(workbook)
             .build()
 
         return cellBuilder.cellStyle(style)
-    }
-
-
-    private fun getBgColor(shadowed: Boolean): IndexedColors {
-        return if (shadowed) IndexedColors.LIGHT_GREEN else IndexedColors.WHITE
-    }
-
-    private fun getPattern(shadowed: Boolean): FillPatternType {
-        return if (shadowed) FillPatternType.SPARSE_DOTS else FillPatternType.SOLID_FOREGROUND
     }
 
 }

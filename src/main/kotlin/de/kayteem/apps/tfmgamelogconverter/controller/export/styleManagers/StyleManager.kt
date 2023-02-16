@@ -1,4 +1,4 @@
-package de.kayteem.apps.tfmgamelogconverter.controller.export.style
+package de.kayteem.apps.tfmgamelogconverter.controller.export.styleManagers
 
 /**
  * Interface for creating and managing cell styles for Excel sheets.

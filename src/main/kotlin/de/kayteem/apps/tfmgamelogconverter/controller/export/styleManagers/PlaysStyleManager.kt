@@ -1,8 +1,8 @@
-package de.kayteem.apps.tfmgamelogconverter.controller.export.style
+package de.kayteem.apps.tfmgamelogconverter.controller.export.styleManagers
 
 import de.kayteem.apps.tfmgamelogconverter.controller.export.common.CellBuilder
-import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.PlaysSheetFactory.Companion.PlaysColumns
-import de.kayteem.apps.tfmgamelogconverter.controller.export.sheets.PlaysSheetFactory.Companion.PlaysColumns.*
+import de.kayteem.apps.tfmgamelogconverter.controller.export.sheetFactories.PlaysSheetFactory.Companion.PlaysColumns
+import de.kayteem.apps.tfmgamelogconverter.controller.export.sheetFactories.PlaysSheetFactory.Companion.PlaysColumns.*
 import de.kayteem.apps.tfmgamelogconverter.model.internal.Player
 import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.usermodel.IndexedColors
@@ -161,14 +161,6 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
         else {
             IndexedColors.RED
         }
-    }
-
-    private fun getBgColor(shadowed: Boolean): IndexedColors {
-        return if (shadowed) IndexedColors.LIGHT_GREEN else IndexedColors.WHITE
-    }
-
-    private fun getPattern(shadowed: Boolean): FillPatternType {
-        return if (shadowed) FillPatternType.SPARSE_DOTS else FillPatternType.SOLID_FOREGROUND
     }
 
 }
