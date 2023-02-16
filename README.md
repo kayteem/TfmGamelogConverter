@@ -31,7 +31,7 @@ Corps (filtered for Tharsis map):
 
 ## Version History
 - V1.4 [2023_02_16]: "Plays" tab now color-codes victory/defeat, added new "Corps" tab showing play counts of corporations
-- V1.3 [2023_02_12]: application now properly formats all cells and highlights the user's player name for every play
+- V1.3 [2023_02_15]: application now properly formats all cells and highlights the user's player name for every play
 - V1.2 [2023_01_22]: application now exports to Excel, and contains corporation and ELO rating data
 - V1.1 [2023_01_21]: application now also exports the player ELO ratings
 - v1.0 [2023_01_20]: basic functionality for exporting time, board, player names and scores, as well as the number of generations into a CSV
