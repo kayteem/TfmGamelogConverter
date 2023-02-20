@@ -22,31 +22,32 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
             BOARD           -> applyBoardStyle(cellBuilder)
             GENERATIONS     -> applyGenerationsStyle(cellBuilder)
             PLAYER_COUNT    -> applyPlayerCountStyle(cellBuilder)
+            WINNER          -> applyWinnerStyle(cellBuilder)
 
             PLAYER_1_NAME   -> applyPlayerNameStyle(players.getOrNull(0), winner, false, cellBuilder)
-            PLAYER_1_CORP   -> applyCorpStyle(false, cellBuilder)
+            PLAYER_1_CORP   -> applyCorpStyle(players.getOrNull(0), winner, false, cellBuilder)
             PLAYER_1_SCORE  -> applyScoreStyle(players.getOrNull(0), winner, false, cellBuilder)
-            PLAYER_1_ELO    -> applyEloStyle(false, cellBuilder)
+            PLAYER_1_ELO    -> applyEloStyle(players.getOrNull(0), winner, false, cellBuilder)
 
             PLAYER_2_NAME   -> applyPlayerNameStyle(players.getOrNull(1), winner, true, cellBuilder)
-            PLAYER_2_CORP   -> applyCorpStyle(true, cellBuilder)
+            PLAYER_2_CORP   -> applyCorpStyle(players.getOrNull(1), winner, true, cellBuilder)
             PLAYER_2_SCORE  -> applyScoreStyle(players.getOrNull(1), winner, true, cellBuilder)
-            PLAYER_2_ELO    -> applyEloStyle(true, cellBuilder)
+            PLAYER_2_ELO    -> applyEloStyle(players.getOrNull(1), winner, true, cellBuilder)
 
             PLAYER_3_NAME   -> applyPlayerNameStyle(players.getOrNull(2), winner, false, cellBuilder)
-            PLAYER_3_CORP   -> applyCorpStyle(false, cellBuilder)
+            PLAYER_3_CORP   -> applyCorpStyle(players.getOrNull(2), winner, false, cellBuilder)
             PLAYER_3_SCORE  -> applyScoreStyle(players.getOrNull(2), winner, false, cellBuilder)
-            PLAYER_3_ELO    -> applyEloStyle(false, cellBuilder)
+            PLAYER_3_ELO    -> applyEloStyle(players.getOrNull(2), winner, false, cellBuilder)
 
             PLAYER_4_NAME   -> applyPlayerNameStyle(players.getOrNull(3), winner, true, cellBuilder)
-            PLAYER_4_CORP   -> applyCorpStyle(true, cellBuilder)
+            PLAYER_4_CORP   -> applyCorpStyle(players.getOrNull(3), winner, true, cellBuilder)
             PLAYER_4_SCORE  -> applyScoreStyle(players.getOrNull(3), winner, true, cellBuilder)
-            PLAYER_4_ELO    -> applyEloStyle(true, cellBuilder)
+            PLAYER_4_ELO    -> applyEloStyle(players.getOrNull(3), winner, true, cellBuilder)
 
             PLAYER_5_NAME   -> applyPlayerNameStyle(players.getOrNull(4), winner, false, cellBuilder)
-            PLAYER_5_CORP   -> applyCorpStyle(false, cellBuilder)
+            PLAYER_5_CORP   -> applyCorpStyle(players.getOrNull(4), winner, false, cellBuilder)
             PLAYER_5_SCORE  -> applyScoreStyle(players.getOrNull(4), winner, false, cellBuilder)
-            PLAYER_5_ELO    -> applyEloStyle(false, cellBuilder)
+            PLAYER_5_ELO    -> applyEloStyle(players.getOrNull(4), winner, false, cellBuilder)
         }
     }
 
@@ -95,15 +96,25 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
         return cellBuilder.cellStyle(style)
     }
 
-    private fun applyPlayerNameStyle(player: Player?, winner: Player?, shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
-        val isUser = isUser(player)
-        val textColor = getWinnerOrLoserTextColor(player, isUser, winner)
-
+    private fun applyWinnerStyle(cellBuilder: CellBuilder): CellBuilder {
         val style = cellStyleBuilder
             .fontSize(10)
-            .bold(isUser)
+            .bold(false)
             .stringFormat()
-            .textColor(textColor)
+            .textColor(IndexedColors.BLACK)
+            .cellForegroundColor(IndexedColors.LIGHT_GREEN)
+            .cellPattern(FillPatternType.SOLID_FOREGROUND)
+            .build()
+
+        return cellBuilder.cellStyle(style)
+    }
+
+    private fun applyPlayerNameStyle(player: Player?, winner: Player?, shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
+        val style = cellStyleBuilder
+            .fontSize(10)
+            .bold(isUser(player))
+            .stringFormat()
+            .textColor(getWinningScoreTextColor(player, winner))
             .cellForegroundColor(getBgColor(shadowed))
             .cellPattern(getPattern(shadowed))
             .build()
@@ -111,12 +122,12 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
         return cellBuilder.cellStyle(style)
     }
 
-    private fun applyCorpStyle(shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
+    private fun applyCorpStyle(player: Player?, winner: Player?, shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
         val style = cellStyleBuilder
             .fontSize(10)
-            .bold(false)
+            .bold(isUser(player))
             .stringFormat()
-            .textColor(IndexedColors.BLACK)
+            .textColor(getWinningScoreTextColor(player, winner))
             .cellForegroundColor(getBgColor(shadowed))
             .cellPattern(getPattern(shadowed))
             .build()
@@ -125,14 +136,11 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
     }
 
     private fun applyScoreStyle(player: Player?, winner: Player?, shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
-        val isUser = isUser(player)
-        val textColor = getWinnerOrLoserTextColor(player, isUser, winner)
-
         val style = cellStyleBuilder
             .fontSize(10)
-            .bold(true)
+            .bold(isUser(player) || isWinner(player, winner))
             .intFormat()
-            .textColor(textColor)
+            .textColor(getWinningScoreTextColor(player, winner))
             .cellForegroundColor(getBgColor(shadowed))
             .cellPattern(getPattern(shadowed))
             .build()
@@ -140,33 +148,31 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
         return cellBuilder.cellStyle(style)
     }
 
-    private fun applyEloStyle(shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
+    private fun applyEloStyle(player: Player?, winner: Player?, shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
         val style = cellStyleBuilder
             .fontSize(10)
-            .bold(false)
+            .bold(isUser(player))
             .intFormat()
-            .textColor(IndexedColors.BLACK)
+            .textColor(getWinningScoreTextColor(player, winner))
             .cellForegroundColor(getBgColor(shadowed))
             .cellPattern(getPattern(shadowed))
             .build()
 
         return cellBuilder.cellStyle(style)
+    }
+
+    private fun getWinningScoreTextColor(player: Player?, winner: Player?): IndexedColors {
+        return if (!isWinner(player, winner)) IndexedColors.BLACK
+        else if (isUser(player)) IndexedColors.GREEN
+        else IndexedColors.RED
     }
 
     private fun isUser(player: Player?): Boolean {
         return player != null && player.name == username
     }
 
-    private fun getWinnerOrLoserTextColor(player: Player?, isUser: Boolean, winner: Player?): IndexedColors {
-        return if (!isUser) {
-            IndexedColors.BLACK
-        }
-        else if (player == winner) {
-            IndexedColors.GREEN
-        }
-        else {
-            IndexedColors.RED
-        }
+    private fun isWinner(player: Player?, winner: Player?): Boolean {
+        return player != null && player == winner
     }
 
 }
