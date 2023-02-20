@@ -76,6 +76,7 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
                     TIMESTAMP       -> build(timestamp)
                     BOARD           -> build(play.board)
                     GENERATIONS     -> build(play.generations)
+                    PLAYER_COUNT    -> build(players.size)
 
                     PLAYER_1_NAME   -> build(player1?.name)
                     PLAYER_1_CORP   -> build(player1?.corporation)
@@ -110,6 +111,7 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
         mergeAndBorderCells(RANGE_TIMESTAMP, BORDER_STYLE)
         mergeAndBorderCells(RANGE_BOARD, BORDER_STYLE)
         mergeAndBorderCells(RANGE_GENERATIONS, BORDER_STYLE)
+        mergeAndBorderCells(RANGE_PLAYER_COUNT, BORDER_STYLE)
         mergeAndBorderCells(RANGE_PLAYER_1, BORDER_STYLE)
         mergeAndBorderCells(RANGE_PLAYER_2, BORDER_STYLE)
         mergeAndBorderCells(RANGE_PLAYER_3, BORDER_STYLE)
@@ -126,6 +128,7 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
             TIMESTAMP,
             BOARD,
             GENERATIONS,
+            PLAYER_COUNT,
             PLAYER_1_NAME,
             PLAYER_1_CORP,
             PLAYER_1_SCORE,
@@ -152,6 +155,7 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
         private const val HEADER_STR_TIMESTAMP = "Timestamp"
         private const val HEADER_STR_BOARD = "Board"
         private const val HEADER_STR_GENERATIONS = "Gens"
+        private const val HEADER_STR_PLAYER_COUNT = "Players"
         private const val HEADER_STR_PLAYER_1 = "Player 1"
         private const val HEADER_STR_PLAYER_2 = "Player 2"
         private const val HEADER_STR_PLAYER_3 = "Player 3"
@@ -166,6 +170,7 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
             TIMESTAMP to HEADER_STR_TIMESTAMP,
             BOARD to HEADER_STR_BOARD,
             GENERATIONS to HEADER_STR_GENERATIONS,
+            PLAYER_COUNT to HEADER_STR_PLAYER_COUNT,
             PLAYER_1_NAME to HEADER_STR_PLAYER_1,
             PLAYER_2_NAME to HEADER_STR_PLAYER_2,
             PLAYER_3_NAME to HEADER_STR_PLAYER_3,
@@ -201,6 +206,7 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
         private const val COL_WIDTH_TIMESTAMP = 5000
         private const val COL_WIDTH_BOARD = 2500
         private const val COL_WIDTH_GENERATIONS = 2500
+        private const val COL_WIDTH_PLAYER_COUNT = 2500
         private const val COL_WIDTH_PLAYER_NAME = 4000
         private const val COL_WIDTH_PLAYER_CORP = 5500
         private const val COL_WIDTH_PLAYER_SCORE = 2500
@@ -210,6 +216,7 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
             TIMESTAMP to COL_WIDTH_TIMESTAMP,
             BOARD to COL_WIDTH_BOARD,
             GENERATIONS to COL_WIDTH_GENERATIONS,
+            PLAYER_COUNT to COL_WIDTH_PLAYER_COUNT,
             PLAYER_1_NAME to COL_WIDTH_PLAYER_NAME,
             PLAYER_1_CORP to COL_WIDTH_PLAYER_CORP,
             PLAYER_1_SCORE to COL_WIDTH_PLAYER_SCORE,
@@ -242,6 +249,7 @@ class PlaysSheetFactory(private val workbook: XSSFWorkbook, private val username
         val RANGE_TIMESTAMP = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, TIMESTAMP.ordinal, TIMESTAMP.ordinal)
         val RANGE_BOARD = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, BOARD.ordinal, BOARD.ordinal)
         val RANGE_GENERATIONS = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, GENERATIONS.ordinal, GENERATIONS.ordinal)
+        val RANGE_PLAYER_COUNT = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_BOTTOM_HEADER, PLAYER_COUNT.ordinal, PLAYER_COUNT.ordinal)
         val RANGE_PLAYER_1 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_1_NAME.ordinal, PLAYER_1_ELO.ordinal)
         val RANGE_PLAYER_2 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_2_NAME.ordinal, PLAYER_2_ELO.ordinal)
         val RANGE_PLAYER_3 = CellRangeAddress(ROW_IDX_TOP_HEADER, ROW_IDX_TOP_HEADER, PLAYER_3_NAME.ordinal, PLAYER_3_ELO.ordinal)

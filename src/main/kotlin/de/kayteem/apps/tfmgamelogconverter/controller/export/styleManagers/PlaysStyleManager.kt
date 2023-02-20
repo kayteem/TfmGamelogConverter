@@ -21,6 +21,7 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
             TIMESTAMP       -> applyTimestampStyle(cellBuilder)
             BOARD           -> applyBoardStyle(cellBuilder)
             GENERATIONS     -> applyGenerationsStyle(cellBuilder)
+            PLAYER_COUNT    -> applyPlayerCountStyle(cellBuilder)
 
             PLAYER_1_NAME   -> applyPlayerNameStyle(players.getOrNull(0), winner, false, cellBuilder)
             PLAYER_1_CORP   -> applyCorpStyle(false, cellBuilder)
@@ -69,6 +70,19 @@ class PlaysStyleManager(workbook: XSSFWorkbook, private val username: String) : 
     }
 
     private fun applyGenerationsStyle(cellBuilder: CellBuilder): CellBuilder {
+        val style = cellStyleBuilder
+            .fontSize(10)
+            .bold(false)
+            .intFormat()
+            .textColor(IndexedColors.BLACK)
+            .cellForegroundColor(IndexedColors.LIGHT_GREEN)
+            .cellPattern(FillPatternType.SOLID_FOREGROUND)
+            .build()
+
+        return cellBuilder.cellStyle(style)
+    }
+
+    private fun applyPlayerCountStyle(cellBuilder: CellBuilder): CellBuilder {
         val style = cellStyleBuilder
             .fontSize(10)
             .bold(false)
