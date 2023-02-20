@@ -1,4 +1,4 @@
-# Terraforming Mars: GameLog Converter v1.4
+# Terraforming Mars: GameLog Converter v1.5.52
 
 ## Scope
 - This application allows for converting the Terraforming Mars GameLog JSON files  
@@ -6,7 +6,7 @@
 
 ## Download
 
-You may [download the tool here](https://github.com/kayteem/TfmGamelogConverter/blob/main/executable/TfmGamelogConverter%20v1.4.zip) for free.
+You may [download the tool here](https://github.com/kayteem/TfmGamelogConverter/blob/main/executable/TfmGamelogConverter%20v1.5.zip) for free.
          
 ## Screenshots
 Plays:
@@ -15,7 +15,7 @@ Plays:
 Corps:
 ![Screenshot Corps](https://github.com/kayteem/TfmGamelogConverter/blob/main/doc/Screenshot_Corps.PNG?raw=true)    
 
-Corps (filtered for Tharsis map):
+Corps (with Tharsis Filter):
 ![Screenshot Corps_Filtered](https://github.com/kayteem/TfmGamelogConverter/blob/main/doc/Screenshot_Corps_Filtered.PNG?raw=true)
 
 
@@ -56,6 +56,7 @@ Corps (filtered for Tharsis map):
 
 
 ## Version History
+- V1.5 [2023_02_20]: added "Players" and "Winner" columns to "Plays" tab, added win rates to "Corps" tab
 - V1.4 [2023_02_16]: "Plays" tab now color-codes victory/defeat, added new "Corps" tab showing play counts of corporations
 - V1.3 [2023_02_15]: application now properly formats all cells and highlights the user's player name for every play
 - V1.2 [2023_01_22]: application now exports to Excel, and contains corporation and ELO rating data
