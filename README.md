@@ -10,13 +10,13 @@ You may [download the tool here](https://github.com/kayteem/TfmGamelogConverter/
          
 ## Screenshots
 Plays:
-![Screenshot_Plays](https://github.com/kayteem/TfmGamelogConverter/blob/main/doc/Screenshot_Plays.PNG?raw=true)
+![Screenshot_Plays](https://github.com/kayteem/TfmGamelogConverter/blob/main/doc/Screenshot_Plays_v1.5.PNG?raw=true)
       
 Corps:
-![Screenshot Corps](https://github.com/kayteem/TfmGamelogConverter/blob/main/doc/Screenshot_Corps.PNG?raw=true)    
+![Screenshot Corps](https://github.com/kayteem/TfmGamelogConverter/blob/main/doc/Screenshot_Corps_v1.5.PNG?raw=true)    
 
 Corps (with Tharsis Filter):
-![Screenshot Corps_Filtered](https://github.com/kayteem/TfmGamelogConverter/blob/main/doc/Screenshot_Corps_Filtered.PNG?raw=true)
+![Screenshot Corps_Filtered](https://github.com/kayteem/TfmGamelogConverter/blob/main/doc/Screenshot_Corps_Filtered_v1.5.PNG?raw=true)
 
 
 ## QuickStart Guide
