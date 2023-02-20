@@ -94,9 +94,17 @@ class CorpsSheetFactory(private val workbook: XSSFWorkbook) : AbstractSheetFacto
             else corp.wonTotal()
 
 
-        val winRateYou: Int = 0
-        val winRateOpponents: Int = 0
-        val winRateTotal: Int = 0
+        val winRateYou: Double? =
+            if (board != null) corp.winRateOnMapByYou()[board]
+            else corp.winRateByYou()
+
+        val winRateOpponents: Double? =
+            if (board != null) corp.winRateOnMapByOpponents()[board]
+            else corp.winRateByOpponents()
+
+        val winRateTotal: Double? =
+            if (board != null) corp.winRateOnMap()[board]
+            else corp.winRateTotal()
 
         CorpsColumns.values().forEach { column ->
             with(cellBuilder) {

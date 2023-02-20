@@ -50,34 +50,29 @@ data class Corporation(
 
 
     // win rates
-//    fun winRateOnMapYou(): Map<Boards, Double?> {
-//        val winRateOnMapYou = mutableMapOf<Boards, Double?>()
-//
-//        playedOnMapByYou.forEach { (board, playCountOnMapByYou) ->
-//            if (playCountOnMapByYou == 0) {
-//                return@forEach
-//            }
-//
-//            val winCountOnMapByYou = wonOnMapByYou.getOrDefault(board, 0)
-//
-//            winRateOnMapYou
-//        }
-//
-//        return mapOf()
-////        return winsOnMapByYou.getOrDefault(board, 0) / playedOnMapByYou.toDouble()
-//    }
-//
-//    fun winRateOnMapOpponents(board: Boards): Double? {
-//        val playedOnMapByOpponents = playedOnMapByOpponents.getOrElse(board) {
-//            return null
-//        }
-//
-//        return wonOnMapByOpponents.getOrDefault(board, 0) / playedOnMapByOpponents.toDouble()
-//    }
-//
-//    fun winRateOnMapTotal(): Map<Boards, Double> {
-//        return mapOf() // mergePercentages()
-//    }
+    fun winRateOnMapByYou(): Map<Boards, Double?> {
+        return winRateOnMap(playedOnMapByYou, wonOnMapByYou)
+    }
+
+    fun winRateOnMapByOpponents(): Map<Boards, Double?> {
+        return winRateOnMap(playedOnMapByOpponents, wonOnMapByOpponents)
+    }
+
+    fun winRateOnMap(): Map<Boards, Double?> {
+        return winRateOnMap(playedOnMap(), wonOnMap())
+    }
+
+    fun winRateByYou(): Double? {
+        return winRate(playedByYou(), wonByYou())
+    }
+
+    fun winRateByOpponents(): Double? {
+        return winRate(playedByOpponents(), wonByOpponents())
+    }
+
+    fun winRateTotal(): Double? {
+        return winRate(playedTotal(), wonTotal())
+    }
 
 
     // helpers
@@ -95,24 +90,36 @@ data class Corporation(
         return merged
     }
 
-//    private fun mergePercentages(map1: Map<Boards, Double>, map2: Map<Boards, Double>): Map<Boards, Double> {
-//        val merged = mutableMapOf<Boards, Double>()
-//
-//        map1.forEach { (board, count) ->
-//            merged[board] = merged.getOrDefault(board, 0.0) + count
-//        }
-//
-//        map2.forEach { (board, count) ->
-//            merged[board] = merged.getOrDefault(board, 0.0) + count
-//        }
-//
-//        return merged
-//    }
-
     private fun sumOverAllMaps(map: Map<Boards, Int>): Int {
         return map
             .map { it.value }
             .sum()
+    }
+
+    private fun winRateOnMap(playedOnMap: Map<Boards, Int>, wonOnMap: Map<Boards, Int>): Map<Boards, Double?> {
+        val winRateOnMap = mutableMapOf<Boards, Double?>()
+
+        Boards.values().forEach { board ->
+            val playCount = playedOnMap.getOrDefault(board, 0)
+            if (playCount == 0) {
+                return@forEach
+            }
+
+            val winCount = wonOnMap.getOrDefault(board, 0)
+            val winRate = winCount / playCount.toDouble()
+
+            winRateOnMap[board] = winRate
+        }
+
+        return winRateOnMap
+    }
+
+    private fun winRate(playCount: Int, winCount: Int): Double? {
+        if (playCount == 0) {
+            return null
+        }
+
+        return winCount / playCount.toDouble()
     }
 
 }

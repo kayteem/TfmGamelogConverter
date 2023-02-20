@@ -28,9 +28,9 @@ class CorpsStyleManager(workbook: XSSFWorkbook) : AbstractStyleManager(workbook)
             WON_BY_OPPONENTS    -> applyIntStyle(boldRow, true, cellBuilder)
             WON_TOTAL           -> applyTotalIntStyle(true, cellBuilder)
 
-            WIN_RATE_YOU        -> applyIntStyle(boldRow, false, cellBuilder)
-            WIN_RATE_OPPONENTS  -> applyIntStyle(boldRow, false, cellBuilder)
-            WIN_RATE_TOTAL      -> applyTotalIntStyle(false, cellBuilder)
+            WIN_RATE_YOU        -> applyDoubleStyle(boldRow, false, cellBuilder)
+            WIN_RATE_OPPONENTS  -> applyDoubleStyle(boldRow, false, cellBuilder)
+            WIN_RATE_TOTAL      -> applyTotalDoubleStyle(false, cellBuilder)
         }
     }
 
@@ -75,11 +75,37 @@ class CorpsStyleManager(workbook: XSSFWorkbook) : AbstractStyleManager(workbook)
         return cellBuilder.cellStyle(style)
     }
 
+    private fun applyDoubleStyle(bold: Boolean, shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
+        val style = cellStyleBuilder
+            .fontSize(10)
+            .bold(bold)
+            .doubleFormat()
+            .textColor(IndexedColors.BLACK)
+            .cellForegroundColor(getBgColor(shadowed))
+            .cellPattern(getPattern(shadowed))
+            .build()
+
+        return cellBuilder.cellStyle(style)
+    }
+
     private fun applyTotalIntStyle(shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
         val style = cellStyleBuilder
             .fontSize(10)
             .bold(true)
             .intFormat()
+            .textColor(IndexedColors.BLACK)
+            .cellForegroundColor(getBgColor(shadowed))
+            .cellPattern(getPattern(shadowed))
+            .build()
+
+        return cellBuilder.cellStyle(style)
+    }
+
+    private fun applyTotalDoubleStyle(shadowed: Boolean, cellBuilder: CellBuilder): CellBuilder {
+        val style = cellStyleBuilder
+            .fontSize(10)
+            .bold(true)
+            .doubleFormat()
             .textColor(IndexedColors.BLACK)
             .cellForegroundColor(getBgColor(shadowed))
             .cellPattern(getPattern(shadowed))

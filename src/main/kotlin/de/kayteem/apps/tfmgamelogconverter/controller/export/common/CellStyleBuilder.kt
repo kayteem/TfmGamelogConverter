@@ -14,6 +14,7 @@ class CellStyleBuilder(private val workbook: XSSFWorkbook) {
     // members
     private var stringFormat = BuiltinFormats.getBuiltinFormat("text").toShort()
     private var intFormat = workbook.createDataFormat().getFormat("0")
+    private var doubleFormat = workbook.createDataFormat().getFormat("0.00")
     private var dateFormat = workbook.createDataFormat().getFormat("YYYY-MM-DD hh:mm")
 
 
@@ -51,6 +52,12 @@ class CellStyleBuilder(private val workbook: XSSFWorkbook) {
 
     fun intFormat(): CellStyleBuilder {
         this.format = intFormat
+
+        return this
+    }
+
+    fun doubleFormat(): CellStyleBuilder {
+        this.format = doubleFormat
 
         return this
     }
